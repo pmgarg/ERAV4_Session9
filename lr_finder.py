@@ -132,8 +132,8 @@ class LRFinder:
         print(f"  Tested {len(lrs)} learning rates")
         print(f"  Loss range: [{min(losses):.4f}, {max(losses):.4f}]")
 
-        # Find suggested LR (steepest gradient point)
-        suggested_lr = self._suggest_lr(lrs, losses)
+        # Find suggested LRs (initial_lr and max_lr for OneCycleLR)
+        initial_lr, max_lr = self._suggest_lr(lrs, losses)
 
         # Restore original model and optimizer state
         self.model.load_state_dict(self.model_state)
@@ -141,32 +141,53 @@ class LRFinder:
 
         print(f"\n✓ Model and optimizer restored to original state\n")
 
-        return lrs, losses, suggested_lr
+        return lrs, losses, initial_lr, max_lr
 
     def _suggest_lr(self, lrs, losses):
         """
-        Suggest optimal learning rate based on gradient
+        Suggest optimal learning rate based on steepest descent and minimum loss
 
         Args:
             lrs: List of learning rates
             losses: List of losses
 
         Returns:
-            float: Suggested learning rate
+            tuple: (initial_lr, max_lr) for OneCycleLR scheduler
         """
-        # Find steepest gradient (maximum negative gradient)
-        gradients = np.gradient(losses)
-        min_grad_idx = np.argmin(gradients)
-        suggested_lr = lrs[min_grad_idx]
-
-        # Alternative: Use point where loss is minimum
+        # Find point where loss is minimum
         min_loss_idx = np.argmin(losses)
         min_loss_lr = lrs[min_loss_idx]
 
-        # Use the steepest gradient method (more conservative)
-        return suggested_lr
+        # Find steepest descent (most negative gradient)
+        # Use numerical gradient to find where loss is decreasing fastest
+        gradients = np.gradient(losses)
 
-    def plot(self, lrs, losses, suggested_lr=None, skip_start=10, skip_end=5,
+        # Only consider points before the minimum loss (learning, not diverging)
+        valid_gradients = gradients[:min_loss_idx] if min_loss_idx > 10 else gradients
+
+        # Find steepest negative gradient (most negative value)
+        steepest_idx = np.argmin(valid_gradients)
+        steepest_lr = lrs[steepest_idx]
+
+        # Conservative approach:
+        # - initial_lr: Use steepest descent point divided by 10 (very conservative start)
+        # - max_lr: Use point where loss is minimum (optimal learning rate)
+
+        # Ensure initial_lr is reasonable (not too small)
+        initial_lr = min(steepest_lr, min_loss_lr / 10)
+        max_lr = min_loss_lr
+
+        # Validate results (ensure they're not at boundaries)
+        if min_loss_idx < 5:  # Too early
+            print("⚠️  Warning: Minimum loss found very early in LR range")
+            print("    Consider using manual LR values or extending search range")
+        elif min_loss_idx > len(losses) - 5:  # Too late
+            print("⚠️  Warning: Minimum loss at end of LR range")
+            print("    Consider extending end_lr or using manual values")
+
+        return initial_lr, max_lr
+
+    def plot(self, lrs, losses, initial_lr=None, max_lr=None, skip_start=10, skip_end=5,
              save_path=None, show=True):
         """
         Plot learning rate vs loss
@@ -174,7 +195,8 @@ class LRFinder:
         Args:
             lrs: List of learning rates
             losses: List of losses
-            suggested_lr: Suggested learning rate to mark on plot
+            initial_lr: Suggested initial learning rate to mark on plot
+            max_lr: Suggested max learning rate to mark on plot
             skip_start: Number of initial points to skip
             skip_end: Number of final points to skip
             save_path: Path to save plot (optional)
@@ -199,9 +221,11 @@ class LRFinder:
         ax1.set_title('Learning Rate Finder - Log Scale', fontsize=14, fontweight='bold')
         ax1.grid(True, alpha=0.3)
 
-        if suggested_lr:
-            ax1.axvline(x=suggested_lr, color='red', linestyle='--',
-                       label=f'Suggested LR: {suggested_lr:.2e}', linewidth=2)
+        if initial_lr and max_lr:
+            ax1.axvline(x=initial_lr, color='green', linestyle='--',
+                       label=f'Initial LR: {initial_lr:.2e}', linewidth=2)
+            ax1.axvline(x=max_lr, color='red', linestyle='--',
+                       label=f'Max LR: {max_lr:.2e}', linewidth=2)
             ax1.legend(fontsize=10)
 
         # Plot 2: Linear scale (zoomed in)
@@ -211,18 +235,28 @@ class LRFinder:
         ax2.set_title('Learning Rate Finder - Linear Scale', fontsize=14, fontweight='bold')
         ax2.grid(True, alpha=0.3)
 
-        if suggested_lr:
-            ax2.axvline(x=suggested_lr, color='red', linestyle='--',
-                       label=f'Suggested LR: {suggested_lr:.2e}', linewidth=2)
+        if initial_lr and max_lr:
+            ax2.axvline(x=initial_lr, color='green', linestyle='--',
+                       label=f'Initial LR: {initial_lr:.2e}', linewidth=2)
+            ax2.axvline(x=max_lr, color='red', linestyle='--',
+                       label=f'Max LR: {max_lr:.2e}', linewidth=2)
             ax2.legend(fontsize=10)
 
-            # Add text annotation
-            suggested_idx = min(range(len(lrs)), key=lambda i: abs(lrs[i] - suggested_lr))
-            ax1.annotate(f'{suggested_lr:.2e}',
-                        xy=(suggested_lr, losses[suggested_idx]),
+            # Add text annotations
+            max_lr_idx = min(range(len(lrs)), key=lambda i: abs(lrs[i] - max_lr))
+            ax1.annotate(f'Max: {max_lr:.2e}',
+                        xy=(max_lr, losses[max_lr_idx]),
                         xytext=(10, -30), textcoords='offset points',
                         bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.7),
                         arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
+
+            if initial_lr != max_lr:
+                initial_lr_idx = min(range(len(lrs)), key=lambda i: abs(lrs[i] - initial_lr))
+                ax1.annotate(f'Init: {initial_lr:.2e}',
+                            xy=(initial_lr, losses[initial_lr_idx]),
+                            xytext=(-60, 20), textcoords='offset points',
+                            bbox=dict(boxstyle='round,pad=0.5', fc='lightgreen', alpha=0.7),
+                            arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
 
         plt.tight_layout()
 
@@ -237,14 +271,15 @@ class LRFinder:
 
         return fig
 
-    def get_summary(self, lrs, losses, suggested_lr):
+    def get_summary(self, lrs, losses, initial_lr, max_lr):
         """
         Get summary statistics
 
         Args:
             lrs: List of learning rates
             losses: List of losses
-            suggested_lr: Suggested learning rate
+            initial_lr: Suggested initial learning rate
+            max_lr: Suggested max learning rate
 
         Returns:
             dict: Summary statistics
@@ -252,31 +287,34 @@ class LRFinder:
         min_loss_idx = np.argmin(losses)
 
         summary = {
-            'suggested_lr': suggested_lr,
+            'initial_lr': initial_lr,
+            'max_lr': max_lr,
             'min_loss': losses[min_loss_idx],
             'min_loss_lr': lrs[min_loss_idx],
             'lr_range_tested': (lrs[0], lrs[-1]),
             'num_iterations': len(lrs),
-            'recommendation': self._get_recommendation(suggested_lr, lrs[min_loss_idx])
+            'recommendation': self._get_recommendation(initial_lr, max_lr)
         }
 
         return summary
 
-    def _get_recommendation(self, suggested_lr, min_loss_lr):
+    def _get_recommendation(self, initial_lr, max_lr):
         """Get recommendation message"""
         recommendation = []
 
-        recommendation.append(f"Suggested LR: {suggested_lr:.2e}")
-        recommendation.append(f"Minimum loss LR: {min_loss_lr:.2e}")
+        recommendation.append(f"Initial LR: {initial_lr:.2e}")
+        recommendation.append(f"Max LR:     {max_lr:.2e}")
         recommendation.append("")
         recommendation.append("Recommendations:")
-        recommendation.append(f"  - Start with: {suggested_lr:.2e}")
-        recommendation.append(f"  - Max LR (OneCycleLR): {min_loss_lr:.2e}")
-        recommendation.append(f"  - Conservative: {suggested_lr/10:.2e}")
+        recommendation.append(f"  - Initial LR (start): {initial_lr:.2e}")
+        recommendation.append(f"  - Max LR (peak):      {max_lr:.2e}")
+        recommendation.append(f"  - Conservative:       {initial_lr/10:.2e} to {max_lr/2:.2e}")
         recommendation.append("")
-        recommendation.append("Typical usage:")
-        recommendation.append("  optimizer = SGD(model.parameters(), lr=suggested_lr)")
-        recommendation.append("  scheduler = OneCycleLR(optimizer, max_lr=min_loss_lr, ...)")
+        recommendation.append("Typical usage with OneCycleLR:")
+        recommendation.append(f"  optimizer = SGD(model.parameters(), lr={initial_lr:.2e})")
+        recommendation.append(f"  scheduler = OneCycleLR(optimizer, max_lr={max_lr:.2e}, ...)")
+        recommendation.append("")
+        recommendation.append("Note: OneCycleLR will start from max_lr/div_factor and peak at max_lr")
 
         return "\n".join(recommendation)
 
@@ -296,7 +334,7 @@ def find_lr_quick(model, train_loader, criterion, device,
         num_iter: Number of iterations
 
     Returns:
-        tuple: (lrs, losses, suggested_lr, fig)
+        tuple: (lrs, losses, initial_lr, max_lr, fig)
     """
     # Create temporary optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=init_lr)
@@ -305,22 +343,22 @@ def find_lr_quick(model, train_loader, criterion, device,
     lr_finder = LRFinder(model, optimizer, criterion, device)
 
     # Find LR
-    lrs, losses, suggested_lr = lr_finder.find(
+    lrs, losses, initial_lr, max_lr = lr_finder.find(
         train_loader, init_lr, end_lr, num_iter
     )
 
     # Plot
-    fig = lr_finder.plot(lrs, losses, suggested_lr)
+    fig = lr_finder.plot(lrs, losses, initial_lr, max_lr)
 
     # Print summary
-    summary = lr_finder.get_summary(lrs, losses, suggested_lr)
+    summary = lr_finder.get_summary(lrs, losses, initial_lr, max_lr)
     print(f"\n{'='*60}")
     print("LR Finder Summary")
     print(f"{'='*60}")
     print(summary['recommendation'])
     print(f"{'='*60}\n")
 
-    return lrs, losses, suggested_lr, fig
+    return lrs, losses, initial_lr, max_lr, fig
 
 
 if __name__ == "__main__":
@@ -347,11 +385,12 @@ if __name__ == "__main__":
     print("\nRunning LR finder test...")
 
     # Test LR finder
-    lrs, losses, suggested_lr, fig = find_lr_quick(
+    lrs, losses, initial_lr, max_lr, fig = find_lr_quick(
         model, dummy_loader, criterion, device,
         init_lr=1e-7, end_lr=1, num_iter=50
     )
 
     print(f"✓ LR Finder test passed!")
-    print(f"  Suggested LR: {suggested_lr:.2e}")
+    print(f"  Initial LR: {initial_lr:.2e}")
+    print(f"  Max LR: {max_lr:.2e}")
     print(f"  Tested {len(lrs)} learning rates")
