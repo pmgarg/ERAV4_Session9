@@ -52,7 +52,7 @@ def main(args):
         'num_classes': 1000,
 
         # Training Configuration
-        'num_epochs': args.epochs or 90,
+        'num_epochs': args.epochs or 60,
         'batch_size': args.batch_size or 256,
         'num_workers': args.num_workers or 8,
         'pin_memory': True,
@@ -61,10 +61,10 @@ def main(args):
         'augmentation_strength': args.augmentation or 'medium',
 
         # Learning Rate Configuration
-        'find_lr': args.find_lr,
-        'initial_lr': args.initial_lr or 0.05,
-        'max_lr': args.max_lr or 0.3,
-        'lr_finder_iterations': 200,
+        'find_lr': False, #args.find_lr,
+        'initial_lr': 0.063680, #args.initial_lr or 0.05,
+        'max_lr': 1.024401, #args.max_lr or 0.3,
+        'lr_finder_iterations': 4000,
 
         # Regularization
         'weight_decay': 1e-4,
@@ -280,16 +280,16 @@ def main(args):
     )
 
     # Scheduler: OneCycleLR
-    scheduler = optim.lr_scheduler.OneCycleLR(
-        optimizer,
-        max_lr=config['max_lr'],
-        epochs=config['num_epochs'],
-        steps_per_epoch=len(train_loader),
-        pct_start=config['pct_start'],
-        anneal_strategy='cos',
-        div_factor=config['div_factor'],
-        final_div_factor=config['final_div_factor']
-    )
+    #scheduler = optim.lr_scheduler.OneCycleLR(
+    #    optimizer,
+    #    max_lr=config['max_lr'],
+    #    epochs=config['num_epochs'],
+    #    steps_per_epoch=len(train_loader),
+    #    pct_start=config['pct_start'],
+    #    anneal_strategy='cos',
+    #    div_factor=config['div_factor'],
+    #    final_div_factor=config['final_div_factor']
+    #)
 
     # Loss function
     criterion = nn.CrossEntropyLoss(label_smoothing=config['label_smoothing'])
@@ -342,10 +342,11 @@ def main(args):
         val_loader=val_loader,
         criterion=criterion,
         optimizer=optimizer,
-        scheduler=scheduler,
+        #scheduler=scheduler,
+        scheduler=None,
         num_epochs=config['num_epochs'],
-        device=device,
-        save_frequency=config['save_frequency']
+        #device=device,
+        #save_frequency=config['save_frequency']
     )
 
     end_time = time.time()
@@ -498,8 +499,8 @@ if __name__ == "__main__":
                         help='Auto-download dataset if not found (WARNING: ~150GB!)')
 
     # Training arguments
-    parser.add_argument('--epochs', type=int, default=90,
-                        help='Number of training epochs (default: 90)')
+    parser.add_argument('--epochs', type=int, default=60,
+                        help='Number of training epochs (default: 60)')
     parser.add_argument('--batch-size', type=int, default=256,
                         help='Batch size (default: 256)')
     parser.add_argument('--num-workers', type=int, default=8,
