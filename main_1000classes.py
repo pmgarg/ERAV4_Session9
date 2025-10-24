@@ -62,13 +62,13 @@ def main(args):
 
         # Learning Rate Configuration
         'find_lr': False, #args.find_lr,
-        'initial_lr': 0.000000148,#2.522e-04, #0.002522, #0.063680, #args.initial_lr or 0.05,
+        'initial_lr': 6.19e-04, #0.00063680,#2.522e-04, #0.002522, #0.063680, #args.initial_lr or 0.05,
         'max_lr': 1.024401, #args.max_lr or 0.3,
-        'lr_finder_iterations': 2000,
+        'lr_finder_iterations': 2500,
 
         # Regularization
         'weight_decay': 1e-4,
-        'label_smoothing': 0.1,
+        'label_smoothing': 0.0,
         'max_grad_norm': 1.0,
 
         # Model Configuration
