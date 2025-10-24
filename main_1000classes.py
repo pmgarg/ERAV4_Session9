@@ -248,7 +248,7 @@ def main(args):
         lrs, losses, suggested_initial_lr, suggested_max_lr = lr_finder.find(
             train_loader,
             init_lr=1e-8,
-            end_lr=10,
+            end_lr=2,
             num_iter=config['lr_finder_iterations']
         )
 
@@ -278,14 +278,30 @@ def main(args):
             print(f"   Training might be very slow. Using suggested values anyway...")
 
         # Update config
-        config['initial_lr'] = suggested_initial_lr
-        config['max_lr'] = suggested_max_lr/2 # i will check later why divide by 2
+        # For constant LR training (no scheduler), use the suggested max_lr
+        # Optionally divide by 2 for more conservative approach
+        if args.no_scheduler:
+            # For constant LR, use suggested_max_lr directly or reduced
+            config['initial_lr'] = suggested_max_lr * 0.7  # More conservative for constant LR
+            config['max_lr'] = suggested_max_lr * 0.7
+            print(f"\n💡 Using constant LR (no scheduler): {config['initial_lr']:.6f}")
+            print(f"   (70% of suggested max_lr for stability)")
+        else:
+            # For scheduler, use full range
+            config['initial_lr'] = suggested_initial_lr
+            config['max_lr'] = suggested_max_lr / 2
+            print(f"\n💡 Using LR range for scheduler:")
+            print(f"   Initial LR: {config['initial_lr']:.6f}")
+            print(f"   Max LR:     {config['max_lr']:.6f}")
 
         print(f"\n" + "=" * 70)
-        print(f"FINAL LEARNING RATES:")
-        print(f"  Initial LR: {config['initial_lr']:.6f}")
-        print(f"  Max LR:     {config['max_lr']:.6f}")
-        print(f"  Ratio:      {config['max_lr']/config['initial_lr']:.1f}x")
+        print(f"FINAL LEARNING RATE CONFIGURATION:")
+        if args.no_scheduler:
+            print(f"  Constant LR:    {config['initial_lr']:.6f}")
+        else:
+            print(f"  Initial LR:     {config['initial_lr']:.6f}")
+            print(f"  Max LR:         {config['max_lr']:.6f}")
+            print(f"  Ratio:          {config['max_lr']/config['initial_lr']:.1f}x")
         print("=" * 70)
 
         # Save LR values
@@ -294,14 +310,19 @@ def main(args):
             f.write(f"FOUND_MAX_LR={config['max_lr']}\n")
         print(f"\n✓ Learning rates saved to lr_config_1000class.txt")
 
-        # Reload model to reset weights
-        print("\nReloading model with fresh weights...")
-        model = create_resnet50(
-            num_classes=config['num_classes'],
-            zero_init_residual=config['zero_init_residual']
-        )
-        model = model.to(device)
-        print("✓ Model reloaded with random initialization")
+        # Note: LR Finder automatically restores model weights after running
+        # If we resumed from checkpoint, the loaded weights are preserved
+        if start_epoch > 0:
+            print(f"\n✓ Model weights preserved from checkpoint (epoch {start_epoch - 1})")
+        else:
+            # Only reload model if training from scratch
+            print("\nReloading model with fresh weights...")
+            model = create_resnet50(
+                num_classes=config['num_classes'],
+                zero_init_residual=config['zero_init_residual']
+            )
+            model = model.to(device)
+            print("✓ Model reloaded with random initialization")
     else:
         print_banner("SKIPPING LR FINDER")
         print(f"Using manual LR values:")
