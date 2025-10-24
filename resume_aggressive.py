@@ -15,7 +15,7 @@ from datetime import datetime
 
 # Import existing modules
 from model import create_resnet50
-from data_loader_full import load_full_imagenet
+from data_loader_full import get_full_dataloaders
 from lr_finder import LRFinder
 from aggressive_utils import mixup_data, mixup_criterion, EMA, validate_with_tta
 
@@ -408,7 +408,7 @@ def main():
         logger.info(f"GPU: {torch.cuda.get_device_name(0)}")
 
     # Load checkpoint
-    checkpoint_path = './checkpoints_1000class/checkpoint_epoch_15.pth'
+    checkpoint_path = './checkpoints_1000class/best_model.pth'
     logger.info(f"\n📂 Loading checkpoint: {checkpoint_path}")
 
     checkpoint = torch.load(checkpoint_path, map_location=device)
@@ -423,12 +423,15 @@ def main():
 
     # Load data
     logger.info("\n📦 Loading ImageNet-1K dataset...")
-    train_loader, val_loader = load_full_imagenet(
+    train_loader, val_loader, num_classes, class_names = get_full_dataloaders(
         data_dir='./imagenet_1000class_data',
         batch_size=256,
         num_workers=8,
         pin_memory=True,
-        augmentation='medium'
+        augmentation_strength='medium',
+        advanced_augmentation=True,
+        distributed=False,
+        auto_download=False
     )
 
     logger.info(f"✓ Data loaded: {len(train_loader)} train batches, {len(val_loader)} val batches")
@@ -444,7 +447,7 @@ def main():
     )
 
     # Run aggressive training
-    final_acc = trainer.run_all_phases(start_epoch=16)
+    final_acc = trainer.run_all_phases(start_epoch=17)
 
     logger.info(f"\n🏁 Training finished with {final_acc:.2f}% validation accuracy")
 

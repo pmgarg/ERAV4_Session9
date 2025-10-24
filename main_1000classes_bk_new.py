@@ -62,9 +62,9 @@ def main(args):
 
         # Learning Rate Configuration
         'find_lr': False, #args.find_lr,
-        'initial_lr': 0.000000148,#2.522e-04, #0.002522, #0.063680, #args.initial_lr or 0.05,
+        'initial_lr': 0.063680, #args.initial_lr or 0.05,
         'max_lr': 1.024401, #args.max_lr or 0.3,
-        'lr_finder_iterations': 2000,
+        'lr_finder_iterations': 4000,
 
         # Regularization
         'weight_decay': 1e-4,
@@ -179,57 +179,13 @@ def main(args):
     print(f"Total parameters:      {stats['total_parameters']:,}")
     print(f"Trainable parameters:  {stats['trainable_parameters']:,}")
     print(f"Model size:            {stats['model_size_mb']:.2f} MB")
-
-    # ========================================================================
-    # RESUME FROM CHECKPOINT (Optional)
-    # ========================================================================
-    start_epoch = 0
-    resume_checkpoint_path = None
-
-    if args.resume or args.resume_epoch:
-        print_banner("RESUMING FROM CHECKPOINT")
-
-        # Determine checkpoint path
-        if args.resume:
-            resume_checkpoint_path = Path(args.resume)
-        elif args.resume_epoch:
-            resume_checkpoint_path = Path(config['checkpoint_dir']) / f'best_model.pth'
-
-        if not resume_checkpoint_path.exists():
-            print(f"❌ ERROR: Checkpoint not found at: {resume_checkpoint_path}")
-            print(f"\nAvailable checkpoints:")
-            checkpoint_dir = Path(config['checkpoint_dir'])
-            if checkpoint_dir.exists():
-                checkpoints = sorted(checkpoint_dir.glob('checkpoint_epoch_*.pth'))
-                if checkpoints:
-                    for cp in checkpoints:
-                        print(f"  - {cp.name}")
-                else:
-                    print(f"  No checkpoints found in {checkpoint_dir}")
-            sys.exit(1)
-
-        print(f"Loading checkpoint: {resume_checkpoint_path}")
-        checkpoint = torch.load(resume_checkpoint_path, map_location=device)
-
-        # Load model state
-        model.load_state_dict(checkpoint['model_state_dict'])
-        start_epoch = checkpoint['epoch'] + 1
-
-        print(f"✓ Model loaded from epoch {checkpoint['epoch']}")
-        print(f"  Best accuracy so far: {checkpoint.get('best_acc', 'N/A')}")
-        print(f"  Resuming from epoch: {start_epoch}")
-        print(f"  Training from:       RESUMED (loaded weights)")
-    else:
-        print(f"Training from:         Scratch (random initialization)")
-
+    print(f"Training from:         Scratch (random initialization)")
     print(f"\n✓ Model created and moved to {device}")
 
     # ========================================================================
     # LEARNING RATE FINDER (Optional)
     # ========================================================================
-    run_lr_finder = config['find_lr'] or (args.find_lr_on_resume and start_epoch > 0)
-    run_lr_finder = False
-    if run_lr_finder:
+    if config['find_lr']:
         print_banner("LEARNING RATE FINDER - 1000 Classes")
         print("Running LR range test to find optimal learning rates...")
         print(f"This will take ~15-20 minutes on AWS GPU.")
@@ -248,7 +204,7 @@ def main(args):
         lrs, losses, suggested_initial_lr, suggested_max_lr = lr_finder.find(
             train_loader,
             init_lr=1e-8,
-            end_lr=0.5,
+            end_lr=10,
             num_iter=config['lr_finder_iterations']
         )
 
@@ -278,32 +234,14 @@ def main(args):
             print(f"   Training might be very slow. Using suggested values anyway...")
 
         # Update config
-        # For constant LR training (no scheduler), use the suggested max_lr
-        # Optionally divide by 2 for more conservative approach
-        if args.no_scheduler:
-            # For constant LR, use suggested_max_lr directly or reduced
-            #config['initial_lr'] = suggested_initial_lr
-            config['initial_lr'] = suggested_max_lr * 0.7  # More conservative for constant LR
-            config['max_lr'] = suggested_max_lr * 0.7
-            print(f"\n💡 Using constant LR (no scheduler): {config['initial_lr']:.6f}")
-            print(f"   (70% of suggested max_lr for stability)")
-        else:
-            # For scheduler, use full range
-            config['initial_lr'] = suggested_max_lr * 0.7  # More conservative for constant LR
-            #config['initial_lr'] = suggested_initial_lr
-            config['max_lr'] = suggested_max_lr / 2
-            print(f"\n💡 Using LR range for scheduler:")
-            print(f"   Initial LR: {config['initial_lr']:.6f}")
-            print(f"   Max LR:     {config['max_lr']:.6f}")
+        config['initial_lr'] = suggested_initial_lr
+        config['max_lr'] = suggested_max_lr/2 # i will check later why divide by 2
 
         print(f"\n" + "=" * 70)
-        print(f"FINAL LEARNING RATE CONFIGURATION:")
-        if args.no_scheduler:
-            print(f"  Constant LR:    {config['initial_lr']:.6f}")
-        else:
-            print(f"  Initial LR:     {config['initial_lr']:.6f}")
-            print(f"  Max LR:         {config['max_lr']:.6f}")
-            print(f"  Ratio:          {config['max_lr']/config['initial_lr']:.1f}x")
+        print(f"FINAL LEARNING RATES:")
+        print(f"  Initial LR: {config['initial_lr']:.6f}")
+        print(f"  Max LR:     {config['max_lr']:.6f}")
+        print(f"  Ratio:      {config['max_lr']/config['initial_lr']:.1f}x")
         print("=" * 70)
 
         # Save LR values
@@ -312,19 +250,14 @@ def main(args):
             f.write(f"FOUND_MAX_LR={config['max_lr']}\n")
         print(f"\n✓ Learning rates saved to lr_config_1000class.txt")
 
-        # Note: LR Finder automatically restores model weights after running
-        # If we resumed from checkpoint, the loaded weights are preserved
-        if start_epoch > 0:
-            print(f"\n✓ Model weights preserved from checkpoint (epoch {start_epoch - 1})")
-        else:
-            # Only reload model if training from scratch
-            print("\nReloading model with fresh weights...")
-            model = create_resnet50(
-                num_classes=config['num_classes'],
-                zero_init_residual=config['zero_init_residual']
-            )
-            model = model.to(device)
-            print("✓ Model reloaded with random initialization")
+        # Reload model to reset weights
+        print("\nReloading model with fresh weights...")
+        model = create_resnet50(
+            num_classes=config['num_classes'],
+            zero_init_residual=config['zero_init_residual']
+        )
+        model = model.to(device)
+        print("✓ Model reloaded with random initialization")
     else:
         print_banner("SKIPPING LR FINDER")
         print(f"Using manual LR values:")
@@ -402,12 +335,6 @@ def main(args):
 
     start_time = time.time()
 
-    # Determine best accuracy if resuming
-    best_acc_so_far = 0.0
-    if start_epoch > 0 and resume_checkpoint_path:
-        best_acc_so_far = checkpoint.get('best_acc', 0.0)
-        print(f"📊 Resuming with best accuracy: {best_acc_so_far:.2f}%")
-
     # Train the model
     history = trainer.train(
         model=model,
@@ -415,10 +342,11 @@ def main(args):
         val_loader=val_loader,
         criterion=criterion,
         optimizer=optimizer,
-        scheduler=None,  # No scheduler if --no-scheduler flag is set
+        #scheduler=scheduler,
+        scheduler=None,
         num_epochs=config['num_epochs'],
-        start_epoch=start_epoch,
-        best_acc=best_acc_so_far
+        #device=device,
+        #save_frequency=config['save_frequency']
     )
 
     end_time = time.time()
@@ -594,16 +522,6 @@ if __name__ == "__main__":
                         help='OneCycleLR warmup percentage (default: 0.4)')
     parser.add_argument('--final-div-factor', type=float, default=1e3,
                         help='OneCycleLR final div factor (default: 1e3)')
-
-    # Resume arguments
-    parser.add_argument('--resume', type=str, default=None,
-                        help='Path to checkpoint to resume from (e.g., checkpoints_1000class/checkpoint_epoch_17.pth)')
-    parser.add_argument('--resume-epoch', type=int, default=None,
-                        help='Resume from specific epoch number (will auto-find checkpoint)')
-    parser.add_argument('--find-lr-on-resume', action='store_true',
-                        help='Run LR finder when resuming (recommended)')
-    parser.add_argument('--no-scheduler', action='store_true',
-                        help='Train without scheduler (constant LR)')
 
     # Other arguments
     parser.add_argument('--checkpoint-dir', type=str, default='./checkpoints_1000class',

@@ -1,0 +1,519 @@
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'ILSVRC/imagenet-1k' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'ILSVRC/imagenet-1k' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+/home/ubuntu/ImageNet_training/ERAV4_Session9/venv/lib/python3.12/site-packages/PIL/TiffImagePlugin.py:949: UserWarning: Corrupt EXIF data.  Expecting to read 2 bytes but only got 0. 
+  warnings.warn(str(msg))
+/home/ubuntu/ImageNet_training/ERAV4_Session9/venv/lib/python3.12/site-packages/PIL/TiffImagePlugin.py:949: UserWarning: Truncated File Read
+  warnings.warn(str(msg))
+
+======================================================================
+TRAINING CONFIGURATION - ImageNet 1000 Classes
+======================================================================
+data_dir                      : ./imagenet_1000class_data
+num_classes                   : 1000
+num_epochs                    : 90
+batch_size                    : 256
+num_workers                   : 8
+pin_memory                    : True
+augmentation_strength         : medium
+find_lr                       : True
+initial_lr                    : 0.05
+max_lr                        : 0.3
+lr_finder_iterations          : 200
+weight_decay                  : 0.0001
+label_smoothing               : 0.1
+max_grad_norm                 : 1.0
+zero_init_residual            : True
+pct_start                     : 0.4
+div_factor                    : 25.0
+final_div_factor              : 1000.0
+checkpoint_dir                : ./checkpoints_1000class
+save_frequency                : 5
+======================================================================
+
+⚠️  IMPORTANT: Training on 1.28M images!
+Expected time: 13.5-18.0 hours
+Expected cost: ~$4-5 (spot) or ~$12-15 (on-demand)
+======================================================================
+
+======================================================================
+IMPORTS & SETUP
+======================================================================
+✓ PyTorch version: 2.9.0+cu128
+✓ CUDA available: True
+✓ Using CUDA: NVIDIA A10G
+  CUDA Memory: 23.68 GB
+
+Device: cuda
+
+======================================================================
+LOADING FULL IMAGENET-1K DATASET (1000 CLASSES)
+======================================================================
+Expected dataset size:
+  Training:   ~1,281,167 images (~1,281 per class)
+  Validation: ~50,000 images (~50 per class)
+  Total disk space: ~140-150 GB
+  Number of classes: 1000
+======================================================================
+
+
+⚠️  Dataset not found at: imagenet_1000class_data
+Starting automatic download of FULL ImageNet-1K dataset...
+This will download ~150GB of data (1.28M images)
+================================================================================
+DOWNLOADING IMAGENET-1K - FULL DATASET (1000 CLASSES)
+================================================================================
+Total classes: 1000
+Target: ~1,281,167 training images (~1,281 per class)
+Target: ~50,000 validation images (~50 per class)
+Expected download time: 4-6 hours (depends on internet speed)
+Expected disk space: ~150-160 GB
+================================================================================
+
+⚠️  WARNING: This is a VERY large download!
+  - Ensure you have stable internet connection
+  - Ensure you have >200 GB free disk space
+  - Consider running on AWS/cloud with fast network
+================================================================================
+
+[1/4] Loading ImageNet metadata from Hugging Face...
+✓ Metadata loaded
+
+[2/4] Downloading training data (~1.28M images)...
+================================================================================
+  Progress: 5,000/1,281,167 (0.4%) | Classes: 993/1000 | Avg/class: 5
+  Progress: 10,000/1,281,167 (0.8%) | Classes: 1000/1000 | Avg/class: 10
+  Progress: 15,000/1,281,167 (1.2%) | Classes: 1000/1000 | Avg/class: 15
+  Progress: 20,000/1,281,167 (1.6%) | Classes: 1000/1000 | Avg/class: 20
+  Progress: 25,000/1,281,167 (2.0%) | Classes: 1000/1000 | Avg/class: 25
+  Progress: 30,000/1,281,167 (2.3%) | Classes: 1000/1000 | Avg/class: 30
+  Progress: 35,000/1,281,167 (2.7%) | Classes: 1000/1000 | Avg/class: 35
+  Progress: 40,000/1,281,167 (3.1%) | Classes: 1000/1000 | Avg/class: 40
+  Progress: 45,000/1,281,167 (3.5%) | Classes: 1000/1000 | Avg/class: 45
+  Progress: 50,000/1,281,167 (3.9%) | Classes: 1000/1000 | Avg/class: 50
+  Progress: 55,000/1,281,167 (4.3%) | Classes: 1000/1000 | Avg/class: 55
+  Progress: 60,000/1,281,167 (4.7%) | Classes: 1000/1000 | Avg/class: 60
+  Progress: 65,000/1,281,167 (5.1%) | Classes: 1000/1000 | Avg/class: 65
+  Progress: 70,000/1,281,167 (5.5%) | Classes: 1000/1000 | Avg/class: 70
+  Progress: 75,000/1,281,167 (5.9%) | Classes: 1000/1000 | Avg/class: 75
+  Progress: 80,000/1,281,167 (6.2%) | Classes: 1000/1000 | Avg/class: 80
+  Progress: 85,000/1,281,167 (6.6%) | Classes: 1000/1000 | Avg/class: 85
+  Progress: 90,000/1,281,167 (7.0%) | Classes: 1000/1000 | Avg/class: 90
+  Progress: 95,000/1,281,167 (7.4%) | Classes: 1000/1000 | Avg/class: 95
+  Progress: 100,000/1,281,167 (7.8%) | Classes: 1000/1000 | Avg/class: 100
+  Progress: 105,000/1,281,167 (8.2%) | Classes: 1000/1000 | Avg/class: 105
+  Progress: 110,000/1,281,167 (8.6%) | Classes: 1000/1000 | Avg/class: 110
+  Progress: 115,000/1,281,167 (9.0%) | Classes: 1000/1000 | Avg/class: 115
+  Progress: 120,000/1,281,167 (9.4%) | Classes: 1000/1000 | Avg/class: 120
+  Progress: 125,000/1,281,167 (9.8%) | Classes: 1000/1000 | Avg/class: 125
+  Progress: 130,000/1,281,167 (10.1%) | Classes: 1000/1000 | Avg/class: 130
+  Progress: 135,000/1,281,167 (10.5%) | Classes: 1000/1000 | Avg/class: 135
+  Progress: 140,000/1,281,167 (10.9%) | Classes: 1000/1000 | Avg/class: 140
+  Progress: 145,000/1,281,167 (11.3%) | Classes: 1000/1000 | Avg/class: 145
+  Progress: 150,000/1,281,167 (11.7%) | Classes: 1000/1000 | Avg/class: 150
+  Progress: 155,000/1,281,167 (12.1%) | Classes: 1000/1000 | Avg/class: 155
+  Progress: 160,000/1,281,167 (12.5%) | Classes: 1000/1000 | Avg/class: 160
+  Progress: 165,000/1,281,167 (12.9%) | Classes: 1000/1000 | Avg/class: 165
+  Progress: 170,000/1,281,167 (13.3%) | Classes: 1000/1000 | Avg/class: 170
+  Progress: 175,000/1,281,167 (13.7%) | Classes: 1000/1000 | Avg/class: 175
+  Progress: 180,000/1,281,167 (14.0%) | Classes: 1000/1000 | Avg/class: 180
+  Progress: 185,000/1,281,167 (14.4%) | Classes: 1000/1000 | Avg/class: 185
+  Progress: 190,000/1,281,167 (14.8%) | Classes: 1000/1000 | Avg/class: 190
+  Progress: 195,000/1,281,167 (15.2%) | Classes: 1000/1000 | Avg/class: 195
+  Progress: 200,000/1,281,167 (15.6%) | Classes: 1000/1000 | Avg/class: 200
+  Progress: 205,000/1,281,167 (16.0%) | Classes: 1000/1000 | Avg/class: 205
+  Progress: 210,000/1,281,167 (16.4%) | Classes: 1000/1000 | Avg/class: 210
+  Progress: 215,000/1,281,167 (16.8%) | Classes: 1000/1000 | Avg/class: 215
+  Progress: 220,000/1,281,167 (17.2%) | Classes: 1000/1000 | Avg/class: 220
+  Progress: 225,000/1,281,167 (17.6%) | Classes: 1000/1000 | Avg/class: 225
+  Progress: 230,000/1,281,167 (18.0%) | Classes: 1000/1000 | Avg/class: 230
+  Progress: 235,000/1,281,167 (18.3%) | Classes: 1000/1000 | Avg/class: 235
+  Progress: 240,000/1,281,167 (18.7%) | Classes: 1000/1000 | Avg/class: 240
+  Progress: 245,000/1,281,167 (19.1%) | Classes: 1000/1000 | Avg/class: 245
+  Progress: 250,000/1,281,167 (19.5%) | Classes: 1000/1000 | Avg/class: 250
+  Progress: 255,000/1,281,167 (19.9%) | Classes: 1000/1000 | Avg/class: 255
+  Progress: 260,000/1,281,167 (20.3%) | Classes: 1000/1000 | Avg/class: 260
+  Progress: 265,000/1,281,167 (20.7%) | Classes: 1000/1000 | Avg/class: 265
+  Progress: 270,000/1,281,167 (21.1%) | Classes: 1000/1000 | Avg/class: 270
+  Progress: 275,000/1,281,167 (21.5%) | Classes: 1000/1000 | Avg/class: 275
+  Progress: 280,000/1,281,167 (21.9%) | Classes: 1000/1000 | Avg/class: 280
+  Progress: 285,000/1,281,167 (22.2%) | Classes: 1000/1000 | Avg/class: 285
+  Progress: 290,000/1,281,167 (22.6%) | Classes: 1000/1000 | Avg/class: 290
+  Progress: 295,000/1,281,167 (23.0%) | Classes: 1000/1000 | Avg/class: 295
+  Progress: 300,000/1,281,167 (23.4%) | Classes: 1000/1000 | Avg/class: 300
+  Progress: 305,000/1,281,167 (23.8%) | Classes: 1000/1000 | Avg/class: 305
+  Progress: 310,000/1,281,167 (24.2%) | Classes: 1000/1000 | Avg/class: 310
+  Progress: 315,000/1,281,167 (24.6%) | Classes: 1000/1000 | Avg/class: 315
+  Progress: 320,000/1,281,167 (25.0%) | Classes: 1000/1000 | Avg/class: 320
+  Progress: 325,000/1,281,167 (25.4%) | Classes: 1000/1000 | Avg/class: 325
+  Progress: 330,000/1,281,167 (25.8%) | Classes: 1000/1000 | Avg/class: 330
+  Progress: 335,000/1,281,167 (26.1%) | Classes: 1000/1000 | Avg/class: 335
+/home/ubuntu/ImageNet_training/ERAV4_Session9/venv/lib/python3.12/site-packages/PIL/TiffImagePlugin.py:949: UserWarning: Corrupt EXIF data.  Expecting to read 4 bytes but only got 0. 
+  warnings.warn(str(msg))
+/home/ubuntu/ImageNet_training/ERAV4_Session9/venv/lib/python3.12/site-packages/PIL/TiffImagePlugin.py:759: UserWarning: Metadata Warning, tag 274 had too many entries: 4, expected 1
+  warnings.warn(
+  Progress: 340,000/1,281,167 (26.5%) | Classes: 1000/1000 | Avg/class: 340
+  Progress: 345,000/1,281,167 (26.9%) | Classes: 1000/1000 | Avg/class: 345
+  Progress: 350,000/1,281,167 (27.3%) | Classes: 1000/1000 | Avg/class: 350
+  Progress: 355,000/1,281,167 (27.7%) | Classes: 1000/1000 | Avg/class: 355
+  Progress: 360,000/1,281,167 (28.1%) | Classes: 1000/1000 | Avg/class: 360
+  Progress: 365,000/1,281,167 (28.5%) | Classes: 1000/1000 | Avg/class: 365
+  Progress: 370,000/1,281,167 (28.9%) | Classes: 1000/1000 | Avg/class: 370
+  Progress: 375,000/1,281,167 (29.3%) | Classes: 1000/1000 | Avg/class: 375
+  Progress: 380,000/1,281,167 (29.7%) | Classes: 1000/1000 | Avg/class: 380
+  Progress: 385,000/1,281,167 (30.1%) | Classes: 1000/1000 | Avg/class: 385
+  Progress: 390,000/1,281,167 (30.4%) | Classes: 1000/1000 | Avg/class: 390
+  Progress: 395,000/1,281,167 (30.8%) | Classes: 1000/1000 | Avg/class: 395
+  Progress: 400,000/1,281,167 (31.2%) | Classes: 1000/1000 | Avg/class: 400
+  Progress: 405,000/1,281,167 (31.6%) | Classes: 1000/1000 | Avg/class: 405
+  Progress: 410,000/1,281,167 (32.0%) | Classes: 1000/1000 | Avg/class: 410
+  Progress: 415,000/1,281,167 (32.4%) | Classes: 1000/1000 | Avg/class: 415
+  Progress: 420,000/1,281,167 (32.8%) | Classes: 1000/1000 | Avg/class: 420
+  Progress: 425,000/1,281,167 (33.2%) | Classes: 1000/1000 | Avg/class: 425
+  Progress: 430,000/1,281,167 (33.6%) | Classes: 1000/1000 | Avg/class: 430
+  Progress: 435,000/1,281,167 (34.0%) | Classes: 1000/1000 | Avg/class: 435
+  Progress: 440,000/1,281,167 (34.3%) | Classes: 1000/1000 | Avg/class: 440
+  Progress: 445,000/1,281,167 (34.7%) | Classes: 1000/1000 | Avg/class: 445
+  Progress: 450,000/1,281,167 (35.1%) | Classes: 1000/1000 | Avg/class: 450
+  Progress: 455,000/1,281,167 (35.5%) | Classes: 1000/1000 | Avg/class: 455
+  Progress: 460,000/1,281,167 (35.9%) | Classes: 1000/1000 | Avg/class: 460
+  Progress: 465,000/1,281,167 (36.3%) | Classes: 1000/1000 | Avg/class: 465
+  Progress: 470,000/1,281,167 (36.7%) | Classes: 1000/1000 | Avg/class: 470
+  Progress: 475,000/1,281,167 (37.1%) | Classes: 1000/1000 | Avg/class: 475
+  Progress: 480,000/1,281,167 (37.5%) | Classes: 1000/1000 | Avg/class: 480
+  Progress: 485,000/1,281,167 (37.9%) | Classes: 1000/1000 | Avg/class: 485
+  Progress: 490,000/1,281,167 (38.2%) | Classes: 1000/1000 | Avg/class: 490
+  Progress: 495,000/1,281,167 (38.6%) | Classes: 1000/1000 | Avg/class: 495
+  Progress: 500,000/1,281,167 (39.0%) | Classes: 1000/1000 | Avg/class: 500
+  Progress: 505,000/1,281,167 (39.4%) | Classes: 1000/1000 | Avg/class: 505
+  Progress: 510,000/1,281,167 (39.8%) | Classes: 1000/1000 | Avg/class: 510
+  Progress: 515,000/1,281,167 (40.2%) | Classes: 1000/1000 | Avg/class: 515
+  Progress: 520,000/1,281,167 (40.6%) | Classes: 1000/1000 | Avg/class: 520
+  Progress: 525,000/1,281,167 (41.0%) | Classes: 1000/1000 | Avg/class: 525
+  Progress: 530,000/1,281,167 (41.4%) | Classes: 1000/1000 | Avg/class: 530
+  Progress: 535,000/1,281,167 (41.8%) | Classes: 1000/1000 | Avg/class: 535
+  Progress: 540,000/1,281,167 (42.1%) | Classes: 1000/1000 | Avg/class: 540
+  Progress: 545,000/1,281,167 (42.5%) | Classes: 1000/1000 | Avg/class: 545
+  Progress: 550,000/1,281,167 (42.9%) | Classes: 1000/1000 | Avg/class: 550
+  Progress: 555,000/1,281,167 (43.3%) | Classes: 1000/1000 | Avg/class: 555
+  Progress: 560,000/1,281,167 (43.7%) | Classes: 1000/1000 | Avg/class: 560
+  Progress: 565,000/1,281,167 (44.1%) | Classes: 1000/1000 | Avg/class: 565
+  Progress: 570,000/1,281,167 (44.5%) | Classes: 1000/1000 | Avg/class: 570
+  Progress: 575,000/1,281,167 (44.9%) | Classes: 1000/1000 | Avg/class: 575
+  Progress: 580,000/1,281,167 (45.3%) | Classes: 1000/1000 | Avg/class: 580
+  Progress: 585,000/1,281,167 (45.7%) | Classes: 1000/1000 | Avg/class: 585
+  Progress: 590,000/1,281,167 (46.1%) | Classes: 1000/1000 | Avg/class: 590
+  Progress: 595,000/1,281,167 (46.4%) | Classes: 1000/1000 | Avg/class: 595
+  Progress: 600,000/1,281,167 (46.8%) | Classes: 1000/1000 | Avg/class: 600
+  Progress: 605,000/1,281,167 (47.2%) | Classes: 1000/1000 | Avg/class: 605
+  Progress: 610,000/1,281,167 (47.6%) | Classes: 1000/1000 | Avg/class: 610
+  Progress: 615,000/1,281,167 (48.0%) | Classes: 1000/1000 | Avg/class: 615
+  Progress: 620,000/1,281,167 (48.4%) | Classes: 1000/1000 | Avg/class: 620
+  Progress: 625,000/1,281,167 (48.8%) | Classes: 1000/1000 | Avg/class: 625
+  Progress: 630,000/1,281,167 (49.2%) | Classes: 1000/1000 | Avg/class: 630
+  Progress: 635,000/1,281,167 (49.6%) | Classes: 1000/1000 | Avg/class: 635
+  Progress: 640,000/1,281,167 (50.0%) | Classes: 1000/1000 | Avg/class: 640
+  Progress: 645,000/1,281,167 (50.3%) | Classes: 1000/1000 | Avg/class: 645
+  Progress: 650,000/1,281,167 (50.7%) | Classes: 1000/1000 | Avg/class: 650
+  Progress: 655,000/1,281,167 (51.1%) | Classes: 1000/1000 | Avg/class: 655
+  Progress: 660,000/1,281,167 (51.5%) | Classes: 1000/1000 | Avg/class: 660
+  Progress: 665,000/1,281,167 (51.9%) | Classes: 1000/1000 | Avg/class: 665
+  Progress: 670,000/1,281,167 (52.3%) | Classes: 1000/1000 | Avg/class: 670
+  Progress: 675,000/1,281,167 (52.7%) | Classes: 1000/1000 | Avg/class: 675
+  Progress: 680,000/1,281,167 (53.1%) | Classes: 1000/1000 | Avg/class: 680
+  Progress: 685,000/1,281,167 (53.5%) | Classes: 1000/1000 | Avg/class: 685
+  Progress: 690,000/1,281,167 (53.9%) | Classes: 1000/1000 | Avg/class: 690
+  Progress: 695,000/1,281,167 (54.2%) | Classes: 1000/1000 | Avg/class: 695
+  Progress: 700,000/1,281,167 (54.6%) | Classes: 1000/1000 | Avg/class: 700
+  Progress: 705,000/1,281,167 (55.0%) | Classes: 1000/1000 | Avg/class: 705
+  Progress: 710,000/1,281,167 (55.4%) | Classes: 1000/1000 | Avg/class: 710
+  Progress: 715,000/1,281,167 (55.8%) | Classes: 1000/1000 | Avg/class: 715
+  Progress: 720,000/1,281,167 (56.2%) | Classes: 1000/1000 | Avg/class: 720
+  Progress: 725,000/1,281,167 (56.6%) | Classes: 1000/1000 | Avg/class: 725
+  Progress: 730,000/1,281,167 (57.0%) | Classes: 1000/1000 | Avg/class: 730
+  Progress: 735,000/1,281,167 (57.4%) | Classes: 1000/1000 | Avg/class: 735
+  Progress: 740,000/1,281,167 (57.8%) | Classes: 1000/1000 | Avg/class: 740
+  Progress: 745,000/1,281,167 (58.2%) | Classes: 1000/1000 | Avg/class: 745
+  Progress: 750,000/1,281,167 (58.5%) | Classes: 1000/1000 | Avg/class: 750
+  Progress: 755,000/1,281,167 (58.9%) | Classes: 1000/1000 | Avg/class: 755
+  Progress: 760,000/1,281,167 (59.3%) | Classes: 1000/1000 | Avg/class: 760
+  Progress: 765,000/1,281,167 (59.7%) | Classes: 1000/1000 | Avg/class: 765
+  Progress: 770,000/1,281,167 (60.1%) | Classes: 1000/1000 | Avg/class: 770
+  Progress: 775,000/1,281,167 (60.5%) | Classes: 1000/1000 | Avg/class: 775
+  Progress: 780,000/1,281,167 (60.9%) | Classes: 1000/1000 | Avg/class: 780
+  Progress: 785,000/1,281,167 (61.3%) | Classes: 1000/1000 | Avg/class: 785
+  Progress: 790,000/1,281,167 (61.7%) | Classes: 1000/1000 | Avg/class: 790
+  Progress: 795,000/1,281,167 (62.1%) | Classes: 1000/1000 | Avg/class: 795
+  Progress: 800,000/1,281,167 (62.4%) | Classes: 1000/1000 | Avg/class: 800
+  Progress: 805,000/1,281,167 (62.8%) | Classes: 1000/1000 | Avg/class: 805
+  Progress: 810,000/1,281,167 (63.2%) | Classes: 1000/1000 | Avg/class: 810
+  Progress: 815,000/1,281,167 (63.6%) | Classes: 1000/1000 | Avg/class: 815
+  Progress: 820,000/1,281,167 (64.0%) | Classes: 1000/1000 | Avg/class: 820
+  Progress: 825,000/1,281,167 (64.4%) | Classes: 1000/1000 | Avg/class: 825
+  Progress: 830,000/1,281,167 (64.8%) | Classes: 1000/1000 | Avg/class: 830
+  Progress: 835,000/1,281,167 (65.2%) | Classes: 1000/1000 | Avg/class: 835
+  Progress: 840,000/1,281,167 (65.6%) | Classes: 1000/1000 | Avg/class: 840
+  Progress: 845,000/1,281,167 (66.0%) | Classes: 1000/1000 | Avg/class: 845
+  Progress: 850,000/1,281,167 (66.3%) | Classes: 1000/1000 | Avg/class: 850
+  Progress: 855,000/1,281,167 (66.7%) | Classes: 1000/1000 | Avg/class: 855
+  Progress: 860,000/1,281,167 (67.1%) | Classes: 1000/1000 | Avg/class: 860
+  Progress: 865,000/1,281,167 (67.5%) | Classes: 1000/1000 | Avg/class: 865
+  Progress: 870,000/1,281,167 (67.9%) | Classes: 1000/1000 | Avg/class: 870
+  Progress: 875,000/1,281,167 (68.3%) | Classes: 1000/1000 | Avg/class: 875
+  Progress: 880,000/1,281,167 (68.7%) | Classes: 1000/1000 | Avg/class: 880
+  Progress: 885,000/1,281,167 (69.1%) | Classes: 1000/1000 | Avg/class: 885
+  Progress: 890,000/1,281,167 (69.5%) | Classes: 1000/1000 | Avg/class: 890
+  Progress: 895,000/1,281,167 (69.9%) | Classes: 1000/1000 | Avg/class: 895
+  Progress: 900,000/1,281,167 (70.2%) | Classes: 1000/1000 | Avg/class: 900
+  Progress: 905,000/1,281,167 (70.6%) | Classes: 1000/1000 | Avg/class: 905
+  Progress: 910,000/1,281,167 (71.0%) | Classes: 1000/1000 | Avg/class: 910
+  Progress: 915,000/1,281,167 (71.4%) | Classes: 1000/1000 | Avg/class: 915
+  Progress: 920,000/1,281,167 (71.8%) | Classes: 1000/1000 | Avg/class: 920
+  Progress: 925,000/1,281,167 (72.2%) | Classes: 1000/1000 | Avg/class: 925
+  Progress: 930,000/1,281,167 (72.6%) | Classes: 1000/1000 | Avg/class: 930
+  Progress: 935,000/1,281,167 (73.0%) | Classes: 1000/1000 | Avg/class: 935
+  Progress: 940,000/1,281,167 (73.4%) | Classes: 1000/1000 | Avg/class: 940
+  Progress: 945,000/1,281,167 (73.8%) | Classes: 1000/1000 | Avg/class: 945
+  Progress: 950,000/1,281,167 (74.2%) | Classes: 1000/1000 | Avg/class: 950
+  Progress: 955,000/1,281,167 (74.5%) | Classes: 1000/1000 | Avg/class: 955
+  Progress: 960,000/1,281,167 (74.9%) | Classes: 1000/1000 | Avg/class: 960
+  Progress: 965,000/1,281,167 (75.3%) | Classes: 1000/1000 | Avg/class: 965
+  Progress: 970,000/1,281,167 (75.7%) | Classes: 1000/1000 | Avg/class: 970
+  Progress: 975,000/1,281,167 (76.1%) | Classes: 1000/1000 | Avg/class: 975
+  Progress: 980,000/1,281,167 (76.5%) | Classes: 1000/1000 | Avg/class: 980
+  Progress: 985,000/1,281,167 (76.9%) | Classes: 1000/1000 | Avg/class: 985
+  Progress: 990,000/1,281,167 (77.3%) | Classes: 1000/1000 | Avg/class: 990
+  Progress: 995,000/1,281,167 (77.7%) | Classes: 1000/1000 | Avg/class: 995
+  Progress: 1,000,000/1,281,167 (78.1%) | Classes: 1000/1000 | Avg/class: 1000
+  Progress: 1,005,000/1,281,167 (78.4%) | Classes: 1000/1000 | Avg/class: 1005
+  Progress: 1,010,000/1,281,167 (78.8%) | Classes: 1000/1000 | Avg/class: 1010
+  Progress: 1,015,000/1,281,167 (79.2%) | Classes: 1000/1000 | Avg/class: 1015
+  Progress: 1,020,000/1,281,167 (79.6%) | Classes: 1000/1000 | Avg/class: 1020
+  Progress: 1,025,000/1,281,167 (80.0%) | Classes: 1000/1000 | Avg/class: 1025
+  Progress: 1,030,000/1,281,167 (80.4%) | Classes: 1000/1000 | Avg/class: 1030
+  Progress: 1,035,000/1,281,167 (80.8%) | Classes: 1000/1000 | Avg/class: 1035
+  Progress: 1,040,000/1,281,167 (81.2%) | Classes: 1000/1000 | Avg/class: 1040
+  Progress: 1,045,000/1,281,167 (81.6%) | Classes: 1000/1000 | Avg/class: 1045
+  Progress: 1,050,000/1,281,167 (82.0%) | Classes: 1000/1000 | Avg/class: 1050
+  Progress: 1,055,000/1,281,167 (82.3%) | Classes: 1000/1000 | Avg/class: 1055
+  Progress: 1,060,000/1,281,167 (82.7%) | Classes: 1000/1000 | Avg/class: 1060
+  Progress: 1,065,000/1,281,167 (83.1%) | Classes: 1000/1000 | Avg/class: 1065
+  Progress: 1,070,000/1,281,167 (83.5%) | Classes: 1000/1000 | Avg/class: 1070
+  Progress: 1,075,000/1,281,167 (83.9%) | Classes: 1000/1000 | Avg/class: 1075
+  Progress: 1,080,000/1,281,167 (84.3%) | Classes: 1000/1000 | Avg/class: 1080
+  Progress: 1,085,000/1,281,167 (84.7%) | Classes: 1000/1000 | Avg/class: 1085
+  Progress: 1,090,000/1,281,167 (85.1%) | Classes: 1000/1000 | Avg/class: 1090
+  Progress: 1,095,000/1,281,167 (85.5%) | Classes: 1000/1000 | Avg/class: 1095
+  Progress: 1,100,000/1,281,167 (85.9%) | Classes: 1000/1000 | Avg/class: 1100
+  Progress: 1,105,000/1,281,167 (86.2%) | Classes: 1000/1000 | Avg/class: 1105
+  Progress: 1,110,000/1,281,167 (86.6%) | Classes: 1000/1000 | Avg/class: 1110
+  Progress: 1,115,000/1,281,167 (87.0%) | Classes: 1000/1000 | Avg/class: 1115
+  Progress: 1,120,000/1,281,167 (87.4%) | Classes: 1000/1000 | Avg/class: 1120
+  Progress: 1,125,000/1,281,167 (87.8%) | Classes: 1000/1000 | Avg/class: 1125
+  Progress: 1,130,000/1,281,167 (88.2%) | Classes: 1000/1000 | Avg/class: 1130
+  Progress: 1,135,000/1,281,167 (88.6%) | Classes: 1000/1000 | Avg/class: 1135
+  Progress: 1,140,000/1,281,167 (89.0%) | Classes: 1000/1000 | Avg/class: 1140
+  Progress: 1,145,000/1,281,167 (89.4%) | Classes: 1000/1000 | Avg/class: 1145
+  Progress: 1,150,000/1,281,167 (89.8%) | Classes: 1000/1000 | Avg/class: 1150
+  Progress: 1,155,000/1,281,167 (90.2%) | Classes: 1000/1000 | Avg/class: 1155
+  Progress: 1,160,000/1,281,167 (90.5%) | Classes: 1000/1000 | Avg/class: 1160
+  Progress: 1,165,000/1,281,167 (90.9%) | Classes: 1000/1000 | Avg/class: 1165
+  Progress: 1,170,000/1,281,167 (91.3%) | Classes: 1000/1000 | Avg/class: 1170
+  Progress: 1,175,000/1,281,167 (91.7%) | Classes: 1000/1000 | Avg/class: 1175
+  Progress: 1,180,000/1,281,167 (92.1%) | Classes: 1000/1000 | Avg/class: 1180
+  Progress: 1,185,000/1,281,167 (92.5%) | Classes: 1000/1000 | Avg/class: 1185
+  Progress: 1,190,000/1,281,167 (92.9%) | Classes: 1000/1000 | Avg/class: 1190
+  Progress: 1,195,000/1,281,167 (93.3%) | Classes: 1000/1000 | Avg/class: 1195
+  Progress: 1,200,000/1,281,167 (93.7%) | Classes: 1000/1000 | Avg/class: 1200
+  Progress: 1,205,000/1,281,167 (94.1%) | Classes: 1000/1000 | Avg/class: 1205
+  Progress: 1,210,000/1,281,167 (94.4%) | Classes: 1000/1000 | Avg/class: 1210
+  Progress: 1,215,000/1,281,167 (94.8%) | Classes: 1000/1000 | Avg/class: 1215
+  Progress: 1,220,000/1,281,167 (95.2%) | Classes: 1000/1000 | Avg/class: 1220
+  Progress: 1,225,000/1,281,167 (95.6%) | Classes: 1000/1000 | Avg/class: 1225
+  Progress: 1,230,000/1,281,167 (96.0%) | Classes: 1000/1000 | Avg/class: 1230
+  Progress: 1,235,000/1,281,167 (96.4%) | Classes: 1000/1000 | Avg/class: 1235
+  Progress: 1,240,000/1,281,167 (96.8%) | Classes: 1000/1000 | Avg/class: 1240
+  Progress: 1,245,000/1,281,167 (97.2%) | Classes: 1000/1000 | Avg/class: 1245
+  Progress: 1,250,000/1,281,167 (97.6%) | Classes: 1000/1000 | Avg/class: 1250
+  Progress: 1,255,000/1,281,167 (98.0%) | Classes: 1000/1000 | Avg/class: 1255
+  Progress: 1,260,000/1,281,167 (98.3%) | Classes: 1000/1000 | Avg/class: 1260
+  Progress: 1,265,000/1,281,167 (98.7%) | Classes: 1000/1000 | Avg/class: 1265
+  Progress: 1,270,000/1,281,167 (99.1%) | Classes: 1000/1000 | Avg/class: 1270
+  Progress: 1,275,000/1,281,167 (99.5%) | Classes: 1000/1000 | Avg/class: 1275
+  Progress: 1,280,000/1,281,167 (99.9%) | Classes: 1000/1000 | Avg/class: 1280
+
+✓ Training data complete: 1,281,166 images across 1000 classes
+
+[3/4] Downloading validation data (~50K images)...
+================================================================================
+  Progress: 2,000/50,000 (4.0%) | Classes: 873/1000 | Avg/class: 2
+  Progress: 4,000/50,000 (8.0%) | Classes: 987/1000 | Avg/class: 4
+  Progress: 6,000/50,000 (12.0%) | Classes: 997/1000 | Avg/class: 6
+  Progress: 8,000/50,000 (16.0%) | Classes: 999/1000 | Avg/class: 8
+  Progress: 10,000/50,000 (20.0%) | Classes: 1000/1000 | Avg/class: 10
+  Progress: 12,000/50,000 (24.0%) | Classes: 1000/1000 | Avg/class: 12
+  Progress: 14,000/50,000 (28.0%) | Classes: 1000/1000 | Avg/class: 14
+  Progress: 16,000/50,000 (32.0%) | Classes: 1000/1000 | Avg/class: 16
+  Progress: 18,000/50,000 (36.0%) | Classes: 1000/1000 | Avg/class: 18
+  Progress: 20,000/50,000 (40.0%) | Classes: 1000/1000 | Avg/class: 20
+  Progress: 22,000/50,000 (44.0%) | Classes: 1000/1000 | Avg/class: 22
+  Progress: 24,000/50,000 (48.0%) | Classes: 1000/1000 | Avg/class: 24
+  Progress: 26,000/50,000 (52.0%) | Classes: 1000/1000 | Avg/class: 26
+  Progress: 28,000/50,000 (56.0%) | Classes: 1000/1000 | Avg/class: 28
+  Progress: 30,000/50,000 (60.0%) | Classes: 1000/1000 | Avg/class: 30
+  Progress: 32,000/50,000 (64.0%) | Classes: 1000/1000 | Avg/class: 32
+  Progress: 34,000/50,000 (68.0%) | Classes: 1000/1000 | Avg/class: 34
+  Progress: 36,000/50,000 (72.0%) | Classes: 1000/1000 | Avg/class: 36
+  Progress: 38,000/50,000 (76.0%) | Classes: 1000/1000 | Avg/class: 38
+  Progress: 40,000/50,000 (80.0%) | Classes: 1000/1000 | Avg/class: 40
+  Progress: 42,000/50,000 (84.0%) | Classes: 1000/1000 | Avg/class: 42
+  Progress: 44,000/50,000 (88.0%) | Classes: 1000/1000 | Avg/class: 44
+  Progress: 46,000/50,000 (92.0%) | Classes: 1000/1000 | Avg/class: 46
+  Progress: 48,000/50,000 (96.0%) | Classes: 1000/1000 | Avg/class: 48
+  Progress: 50,000/50,000 (100.0%) | Classes: 1000/1000 | Avg/class: 50
+
+✓ Validation data complete: 50,000 images across 1000 classes
+
+[4/4] Download complete!
+================================================================================
+DOWNLOAD SUMMARY
+================================================================================
+Training samples: 1,281,166
+Validation samples: 50,000
+Training classes: 1000
+Validation classes: 1000
+Avg samples per class (train): 1281
+Avg samples per class (val): 50
+Location: imagenet_1000class_data
+Disk space used: ~0.1 GB
+================================================================================
+✓ Ready for training!
+================================================================================
+
+Loading full ImageNet dataset from imagenet_1000class_data...
+Full dataset loaded:
+  Training samples: 1,281,166
+  Validation samples: 50,000
+  Number of classes: 1000
+  Batch size: 256
+  Number of batches: 5,005 train, 196 val
+  Distributed: False
+
+
+✓ Full ImageNet data loaded successfully!
+  Number of classes: 1000
+  Training batches: 5,005
+  Validation batches: 196
+  Augmentation strength: medium
+
+  With batch size 256:
+    ~5005 iterations per epoch
+    ~450,450 total iterations
+
+======================================================================
+CREATING RESNET50 MODEL (1000 CLASSES)
+======================================================================
+Architecture:          ResNet50
+Number of classes:     1000
+Total parameters:      25,557,032
+Trainable parameters:  25,557,032
+Model size:            97.49 MB
+Training from:         Scratch (random initialization)
+
+✓ Model created and moved to cuda
+
+======================================================================
+LEARNING RATE FINDER - 1000 Classes
+======================================================================
+Running LR range test to find optimal learning rates...
+This will take ~15-20 minutes on AWS GPU.
+Testing 200 learning rate values.
+
+
+============================================================
+Learning Rate Finder
+============================================================
+Testing range: 1.00e-08 to 1.00e+01
+Number of iterations: 200
+============================================================
+
+Finding LR:   0%|          | 0/200 [00:00<?, ?it/s]Finding LR:   0%|          | 0/200 [00:22<?, ?it/s, lr=1.00e-08, loss=6.9297]Finding LR:   0%|          | 1/200 [00:22<1:13:23, 22.13s/it, lr=1.00e-08, loss=6.9297]Finding LR:   0%|          | 1/200 [00:22<1:13:23, 22.13s/it, lr=1.11e-08, loss=6.9349]Finding LR:   1%|          | 2/200 [00:22<31:36,  9.58s/it, lr=1.11e-08, loss=6.9349]  Finding LR:   1%|          | 2/200 [00:23<31:36,  9.58s/it, lr=1.23e-08, loss=6.9338]Finding LR:   2%|▏         | 3/200 [00:23<17:30,  5.33s/it, lr=1.23e-08, loss=6.9338]Finding LR:   2%|▏         | 3/200 [00:23<17:30,  5.33s/it, lr=1.36e-08, loss=6.9371]Finding LR:   2%|▏         | 4/200 [00:23<11:31,  3.53s/it, lr=1.36e-08, loss=6.9371]Finding LR:   2%|▏         | 4/200 [00:24<11:31,  3.53s/it, lr=1.51e-08, loss=6.9425]Finding LR:   2%|▎         | 5/200 [00:24<08:13,  2.53s/it, lr=1.51e-08, loss=6.9425]Finding LR:   2%|▎         | 5/200 [00:25<08:13,  2.53s/it, lr=1.68e-08, loss=6.9434]Finding LR:   3%|▎         | 6/200 [00:25<06:14,  1.93s/it, lr=1.68e-08, loss=6.9434]Finding LR:   3%|▎         | 6/200 [00:26<06:14,  1.93s/it, lr=1.86e-08, loss=6.9436]Finding LR:   4%|▎         | 7/200 [00:26<04:58,  1.55s/it, lr=1.86e-08, loss=6.9436]Finding LR:   4%|▎         | 7/200 [00:27<04:58,  1.55s/it, lr=2.07e-08, loss=6.9457]Finding LR:   4%|▍         | 8/200 [00:27<04:08,  1.30s/it, lr=2.07e-08, loss=6.9457]Finding LR:   4%|▍         | 8/200 [00:27<04:08,  1.30s/it, lr=2.29e-08, loss=6.9460]Finding LR:   4%|▍         | 9/200 [00:27<03:35,  1.13s/it, lr=2.29e-08, loss=6.9460]Finding LR:   4%|▍         | 9/200 [00:28<03:35,  1.13s/it, lr=2.54e-08, loss=6.9474]Finding LR:   5%|▌         | 10/200 [00:28<03:12,  1.01s/it, lr=2.54e-08, loss=6.9474]Finding LR:   5%|▌         | 10/200 [00:29<03:12,  1.01s/it, lr=2.82e-08, loss=6.9479]Finding LR:   6%|▌         | 11/200 [00:29<02:56,  1.07it/s, lr=2.82e-08, loss=6.9479]Finding LR:   6%|▌         | 11/200 [00:30<02:56,  1.07it/s, lr=3.13e-08, loss=6.9466]Finding LR:   6%|▌         | 12/200 [00:30<02:46,  1.13it/s, lr=3.13e-08, loss=6.9466]Finding LR:   6%|▌         | 12/200 [00:30<02:46,  1.13it/s, lr=3.47e-08, loss=6.9456]Finding LR:   6%|▋         | 13/200 [00:30<02:38,  1.18it/s, lr=3.47e-08, loss=6.9456]Finding LR:   6%|▋         | 13/200 [00:31<02:38,  1.18it/s, lr=3.85e-08, loss=6.9455]Finding LR:   7%|▋         | 14/200 [00:31<02:32,  1.22it/s, lr=3.85e-08, loss=6.9455]Finding LR:   7%|▋         | 14/200 [00:32<02:32,  1.22it/s, lr=4.27e-08, loss=6.9448]Finding LR:   8%|▊         | 15/200 [00:32<02:28,  1.25it/s, lr=4.27e-08, loss=6.9448]Finding LR:   8%|▊         | 15/200 [00:33<02:28,  1.25it/s, lr=4.73e-08, loss=6.9438]Finding LR:   8%|▊         | 16/200 [00:33<02:25,  1.27it/s, lr=4.73e-08, loss=6.9438]Finding LR:   8%|▊         | 16/200 [00:33<02:25,  1.27it/s, lr=5.25e-08, loss=6.9429]Finding LR:   8%|▊         | 17/200 [00:33<02:22,  1.28it/s, lr=5.25e-08, loss=6.9429]Finding LR:   8%|▊         | 17/200 [00:34<02:22,  1.28it/s, lr=5.82e-08, loss=6.9421]Finding LR:   9%|▉         | 18/200 [00:34<02:20,  1.29it/s, lr=5.82e-08, loss=6.9421]Finding LR:   9%|▉         | 18/200 [00:35<02:20,  1.29it/s, lr=6.46e-08, loss=6.9425]Finding LR:  10%|▉         | 19/200 [00:35<02:19,  1.30it/s, lr=6.46e-08, loss=6.9425]Finding LR:  10%|▉         | 19/200 [00:36<02:19,  1.30it/s, lr=7.16e-08, loss=6.9429]Finding LR:  10%|█         | 20/200 [00:36<02:17,  1.30it/s, lr=7.16e-08, loss=6.9429]Finding LR:  10%|█         | 20/200 [00:36<02:17,  1.30it/s, lr=7.94e-08, loss=6.9420]Finding LR:  10%|█         | 21/200 [00:36<02:16,  1.31it/s, lr=7.94e-08, loss=6.9420]Finding LR:  10%|█         | 21/200 [00:37<02:16,  1.31it/s, lr=8.81e-08, loss=6.9415]Finding LR:  11%|█         | 22/200 [00:37<02:15,  1.31it/s, lr=8.81e-08, loss=6.9415]Finding LR:  11%|█         | 22/200 [00:38<02:15,  1.31it/s, lr=9.77e-08, loss=6.9412]Finding LR:  12%|█▏        | 23/200 [00:38<02:15,  1.31it/s, lr=9.77e-08, loss=6.9412]Finding LR:  12%|█▏        | 23/200 [00:39<02:15,  1.31it/s, lr=1.08e-07, loss=6.9408]Finding LR:  12%|█▏        | 24/200 [00:39<02:14,  1.31it/s, lr=1.08e-07, loss=6.9408]Finding LR:  12%|█▏        | 24/200 [00:39<02:14,  1.31it/s, lr=1.20e-07, loss=6.9426]Finding LR:  12%|█▎        | 25/200 [00:39<02:13,  1.31it/s, lr=1.20e-07, loss=6.9426]Finding LR:  12%|█▎        | 25/200 [00:40<02:13,  1.31it/s, lr=1.33e-07, loss=6.9414]Finding LR:  13%|█▎        | 26/200 [00:40<02:12,  1.32it/s, lr=1.33e-07, loss=6.9414]Finding LR:  13%|█▎        | 26/200 [00:41<02:12,  1.32it/s, lr=1.48e-07, loss=6.9433]Finding LR:  14%|█▎        | 27/200 [00:41<02:11,  1.32it/s, lr=1.48e-07, loss=6.9433]Finding LR:  14%|█▎        | 27/200 [00:42<02:11,  1.32it/s, lr=1.64e-07, loss=6.9422]Finding LR:  14%|█▍        | 28/200 [00:42<02:10,  1.32it/s, lr=1.64e-07, loss=6.9422]Finding LR:  14%|█▍        | 28/200 [00:42<02:10,  1.32it/s, lr=1.82e-07, loss=6.9423]Finding LR:  14%|█▍        | 29/200 [00:42<02:09,  1.32it/s, lr=1.82e-07, loss=6.9423]Finding LR:  14%|█▍        | 29/200 [00:43<02:09,  1.32it/s, lr=2.02e-07, loss=6.9441]Finding LR:  15%|█▌        | 30/200 [00:43<02:09,  1.32it/s, lr=2.02e-07, loss=6.9441]Finding LR:  15%|█▌        | 30/200 [00:44<02:09,  1.32it/s, lr=2.24e-07, loss=6.9436]Finding LR:  16%|█▌        | 31/200 [00:44<02:08,  1.32it/s, lr=2.24e-07, loss=6.9436]Finding LR:  16%|█▌        | 31/200 [00:45<02:08,  1.32it/s, lr=2.48e-07, loss=6.9446]Finding LR:  16%|█▌        | 32/200 [00:45<02:07,  1.32it/s, lr=2.48e-07, loss=6.9446]Finding LR:  16%|█▌        | 32/200 [00:46<02:07,  1.32it/s, lr=2.75e-07, loss=6.9437]Finding LR:  16%|█▋        | 33/200 [00:46<02:07,  1.31it/s, lr=2.75e-07, loss=6.9437]Finding LR:  16%|█▋        | 33/200 [00:46<02:07,  1.31it/s, lr=3.05e-07, loss=6.9443]Finding LR:  17%|█▋        | 34/200 [00:46<02:06,  1.31it/s, lr=3.05e-07, loss=6.9443]Finding LR:  17%|█▋        | 34/200 [00:47<02:06,  1.31it/s, lr=3.39e-07, loss=6.9440]Finding LR:  18%|█▊        | 35/200 [00:47<02:05,  1.31it/s, lr=3.39e-07, loss=6.9440]Finding LR:  18%|█▊        | 35/200 [00:48<02:05,  1.31it/s, lr=3.76e-07, loss=6.9439]Finding LR:  18%|█▊        | 36/200 [00:48<02:04,  1.32it/s, lr=3.76e-07, loss=6.9439]Finding LR:  18%|█▊        | 36/200 [00:49<02:04,  1.32it/s, lr=4.17e-07, loss=6.9437]Finding LR:  18%|█▊        | 37/200 [00:49<02:03,  1.31it/s, lr=4.17e-07, loss=6.9437]Finding LR:  18%|█▊        | 37/200 [00:49<02:03,  1.31it/s, lr=4.62e-07, loss=6.9447]Finding LR:  19%|█▉        | 38/200 [00:49<02:03,  1.31it/s, lr=4.62e-07, loss=6.9447]Finding LR:  19%|█▉        | 38/200 [00:50<02:03,  1.31it/s, lr=5.13e-07, loss=6.9452]Finding LR:  20%|█▉        | 39/200 [00:50<02:02,  1.32it/s, lr=5.13e-07, loss=6.9452]Finding LR:  20%|█▉        | 39/200 [00:51<02:02,  1.32it/s, lr=5.69e-07, loss=6.9454]Finding LR:  20%|██        | 40/200 [00:51<02:01,  1.32it/s, lr=5.69e-07, loss=6.9454]Finding LR:  20%|██        | 40/200 [00:52<02:01,  1.32it/s, lr=6.31e-07, loss=6.9447]Finding LR:  20%|██        | 41/200 [00:52<02:00,  1.31it/s, lr=6.31e-07, loss=6.9447]Finding LR:  20%|██        | 41/200 [00:52<02:00,  1.31it/s, lr=7.00e-07, loss=6.9445]Finding LR:  21%|██        | 42/200 [00:52<02:00,  1.32it/s, lr=7.00e-07, loss=6.9445]Finding LR:  21%|██        | 42/200 [00:53<02:00,  1.32it/s, lr=7.76e-07, loss=6.9445]Finding LR:  22%|██▏       | 43/200 [00:53<01:59,  1.32it/s, lr=7.76e-07, loss=6.9445]Finding LR:  22%|██▏       | 43/200 [00:54<01:59,  1.32it/s, lr=8.61e-07, loss=6.9437]Finding LR:  22%|██▏       | 44/200 [00:54<01:58,  1.31it/s, lr=8.61e-07, loss=6.9437]Finding LR:  22%|██▏       | 44/200 [00:55<01:58,  1.31it/s, lr=9.55e-07, loss=6.9445]Finding LR:  22%|██▎       | 45/200 [00:55<01:57,  1.32it/s, lr=9.55e-07, loss=6.9445]Finding LR:  22%|██▎       | 45/200 [00:55<01:57,  1.32it/s, lr=1.06e-06, loss=6.9446]Finding LR:  23%|██▎       | 46/200 [00:55<01:57,  1.32it/s, lr=1.06e-06, loss=6.9446]Finding LR:  23%|██▎       | 46/200 [00:56<01:57,  1.32it/s, lr=1.17e-06, loss=6.9442]Finding LR:  24%|██▎       | 47/200 [00:56<01:56,  1.32it/s, lr=1.17e-06, loss=6.9442]Finding LR:  24%|██▎       | 47/200 [00:57<01:56,  1.32it/s, lr=1.30e-06, loss=6.9443]Finding LR:  24%|██▍       | 48/200 [00:57<01:55,  1.31it/s, lr=1.30e-06, loss=6.9443]Finding LR:  24%|██▍       | 48/200 [00:58<01:55,  1.31it/s, lr=1.45e-06, loss=6.9431]Finding LR:  24%|██▍       | 49/200 [00:58<01:54,  1.31it/s, lr=1.45e-06, loss=6.9431]Finding LR:  24%|██▍       | 49/200 [00:58<01:54,  1.31it/s, lr=1.60e-06, loss=6.9424]Finding LR:  25%|██▌       | 50/200 [00:58<01:54,  1.32it/s, lr=1.60e-06, loss=6.9424]Finding LR:  25%|██▌       | 50/200 [00:59<01:54,  1.32it/s, lr=1.78e-06, loss=6.9427]Finding LR:  26%|██▌       | 51/200 [00:59<01:53,  1.32it/s, lr=1.78e-06, loss=6.9427]Finding LR:  26%|██▌       | 51/200 [01:00<01:53,  1.32it/s, lr=1.97e-06, loss=6.9433]Finding LR:  26%|██▌       | 52/200 [01:00<01:52,  1.32it/s, lr=1.97e-06, loss=6.9433]Finding LR:  26%|██▌       | 52/200 [01:01<01:52,  1.32it/s, lr=2.19e-06, loss=6.9438]Finding LR:  26%|██▋       | 53/200 [01:01<01:51,  1.32it/s, lr=2.19e-06, loss=6.9438]Finding LR:  26%|██▋       | 53/200 [01:01<01:51,  1.32it/s, lr=2.43e-06, loss=6.9441]Finding LR:  27%|██▋       | 54/200 [01:01<01:51,  1.32it/s, lr=2.43e-06, loss=6.9441]Finding LR:  27%|██▋       | 54/200 [01:02<01:51,  1.32it/s, lr=2.69e-06, loss=6.9439]Finding LR:  28%|██▊       | 55/200 [01:02<01:50,  1.32it/s, lr=2.69e-06, loss=6.9439]Finding LR:  28%|██▊       | 55/200 [01:03<01:50,  1.32it/s, lr=2.99e-06, loss=6.9434]Finding LR:  28%|██▊       | 56/200 [01:03<01:49,  1.32it/s, lr=2.99e-06, loss=6.9434]Finding LR:  28%|██▊       | 56/200 [01:04<01:49,  1.32it/s, lr=3.31e-06, loss=6.9417]Finding LR:  28%|██▊       | 57/200 [01:04<01:48,  1.32it/s, lr=3.31e-06, loss=6.9417]Finding LR:  28%|██▊       | 57/200 [01:05<01:48,  1.32it/s, lr=3.67e-06, loss=6.9421]Finding LR:  29%|██▉       | 58/200 [01:05<01:47,  1.32it/s, lr=3.67e-06, loss=6.9421]Finding LR:  29%|██▉       | 58/200 [01:05<01:47,  1.32it/s, lr=4.07e-06, loss=6.9414]Finding LR:  30%|██▉       | 59/200 [01:05<01:47,  1.31it/s, lr=4.07e-06, loss=6.9414]Finding LR:  30%|██▉       | 59/200 [01:06<01:47,  1.31it/s, lr=4.52e-06, loss=6.9423]Finding LR:  30%|███       | 60/200 [01:06<01:46,  1.31it/s, lr=4.52e-06, loss=6.9423]Finding LR:  30%|███       | 60/200 [01:07<01:46,  1.31it/s, lr=5.01e-06, loss=6.9418]Finding LR:  30%|███       | 61/200 [01:07<01:45,  1.32it/s, lr=5.01e-06, loss=6.9418]Finding LR:  30%|███       | 61/200 [01:08<01:45,  1.32it/s, lr=5.56e-06, loss=6.9427]Finding LR:  31%|███       | 62/200 [01:08<01:44,  1.32it/s, lr=5.56e-06, loss=6.9427]Finding LR:  31%|███       | 62/200 [01:08<01:44,  1.32it/s, lr=6.17e-06, loss=6.9438]Finding LR:  32%|███▏      | 63/200 [01:08<01:44,  1.32it/s, lr=6.17e-06, loss=6.9438]Finding LR:  32%|███▏      | 63/200 [01:09<01:44,  1.32it/s, lr=6.84e-06, loss=6.9436]Finding LR:  32%|███▏      | 64/200 [01:09<01:43,  1.32it/s, lr=6.84e-06, loss=6.9436]Finding LR:  32%|███▏      | 64/200 [01:10<01:43,  1.32it/s, lr=7.59e-06, loss=6.9442]Finding LR:  32%|███▎      | 65/200 [01:10<01:42,  1.31it/s, lr=7.59e-06, loss=6.9442]Finding LR:  32%|███▎      | 65/200 [01:11<01:42,  1.31it/s, lr=8.41e-06, loss=6.9434]Finding LR:  33%|███▎      | 66/200 [01:11<01:41,  1.31it/s, lr=8.41e-06, loss=6.9434]Finding LR:  33%|███▎      | 66/200 [01:11<01:41,  1.31it/s, lr=9.33e-06, loss=6.9438]Finding LR:  34%|███▎      | 67/200 [01:11<01:41,  1.31it/s, lr=9.33e-06, loss=6.9438]Finding LR:  34%|███▎      | 67/200 [01:12<01:41,  1.31it/s, lr=1.04e-05, loss=6.9442]Finding LR:  34%|███▍      | 68/200 [01:12<01:40,  1.32it/s, lr=1.04e-05, loss=6.9442]Finding LR:  34%|███▍      | 68/200 [01:13<01:40,  1.32it/s, lr=1.15e-05, loss=6.9449]Finding LR:  34%|███▍      | 69/200 [01:13<01:39,  1.32it/s, lr=1.15e-05, loss=6.9449]Finding LR:  34%|███▍      | 69/200 [01:14<01:39,  1.32it/s, lr=1.27e-05, loss=6.9452]Finding LR:  35%|███▌      | 70/200 [01:14<01:38,  1.32it/s, lr=1.27e-05, loss=6.9452]Finding LR:  35%|███▌      | 70/200 [01:14<01:38,  1.32it/s, lr=1.41e-05, loss=6.9453]Finding LR:  36%|███▌      | 71/200 [01:14<01:37,  1.32it/s, lr=1.41e-05, loss=6.9453]Finding LR:  36%|███▌      | 71/200 [01:15<01:37,  1.32it/s, lr=1.57e-05, loss=6.9457]Finding LR:  36%|███▌      | 72/200 [01:15<01:37,  1.32it/s, lr=1.57e-05, loss=6.9457]Finding LR:  36%|███▌      | 72/200 [01:16<01:37,  1.32it/s, lr=1.74e-05, loss=6.9466]Finding LR:  36%|███▋      | 73/200 [01:16<01:36,  1.31it/s, lr=1.74e-05, loss=6.9466]Finding LR:  36%|███▋      | 73/200 [01:17<01:36,  1.31it/s, lr=1.93e-05, loss=6.9458]Finding LR:  37%|███▋      | 74/200 [01:17<01:35,  1.32it/s, lr=1.93e-05, loss=6.9458]Finding LR:  37%|███▋      | 74/200 [01:17<01:35,  1.32it/s, lr=2.14e-05, loss=6.9435]Finding LR:  38%|███▊      | 75/200 [01:17<01:34,  1.32it/s, lr=2.14e-05, loss=6.9435]Finding LR:  38%|███▊      | 75/200 [01:18<01:34,  1.32it/s, lr=2.37e-05, loss=6.9440]Finding LR:  38%|███▊      | 76/200 [01:18<01:34,  1.31it/s, lr=2.37e-05, loss=6.9440]Finding LR:  38%|███▊      | 76/200 [01:19<01:34,  1.31it/s, lr=2.63e-05, loss=6.9427]Finding LR:  38%|███▊      | 77/200 [01:19<01:33,  1.32it/s, lr=2.63e-05, loss=6.9427]Finding LR:  38%|███▊      | 77/200 [01:20<01:33,  1.32it/s, lr=2.92e-05, loss=6.9424]Finding LR:  39%|███▉      | 78/200 [01:20<01:32,  1.31it/s, lr=2.92e-05, loss=6.9424]Finding LR:  39%|███▉      | 78/200 [01:20<01:32,  1.31it/s, lr=3.24e-05, loss=6.9418]Finding LR:  40%|███▉      | 79/200 [01:20<01:31,  1.32it/s, lr=3.24e-05, loss=6.9418]Finding LR:  40%|███▉      | 79/200 [01:21<01:31,  1.32it/s, lr=3.59e-05, loss=6.9423]Finding LR:  40%|████      | 80/200 [01:21<01:31,  1.32it/s, lr=3.59e-05, loss=6.9423]Finding LR:  40%|████      | 80/200 [01:22<01:31,  1.32it/s, lr=3.98e-05, loss=6.9422]Finding LR:  40%|████      | 81/200 [01:22<01:30,  1.32it/s, lr=3.98e-05, loss=6.9422]Finding LR:  40%|████      | 81/200 [01:23<01:30,  1.32it/s, lr=4.42e-05, loss=6.9417]Finding LR:  41%|████      | 82/200 [01:23<01:29,  1.32it/s, lr=4.42e-05, loss=6.9417]Finding LR:  41%|████      | 82/200 [01:24<01:29,  1.32it/s, lr=4.90e-05, loss=6.9421]Finding LR:  42%|████▏     | 83/200 [01:24<01:28,  1.32it/s, lr=4.90e-05, loss=6.9421]Finding LR:  42%|████▏     | 83/200 [01:24<01:28,  1.32it/s, lr=5.43e-05, loss=6.9435]Finding LR:  42%|████▏     | 84/200 [01:24<01:28,  1.32it/s, lr=5.43e-05, loss=6.9435]Finding LR:  42%|████▏     | 84/200 [01:25<01:28,  1.32it/s, lr=6.03e-05, loss=6.9428]Finding LR:  42%|████▎     | 85/200 [01:25<01:27,  1.32it/s, lr=6.03e-05, loss=6.9428]Finding LR:  42%|████▎     | 85/200 [01:26<01:27,  1.32it/s, lr=6.68e-05, loss=6.9431]Finding LR:  43%|████▎     | 86/200 [01:26<01:26,  1.31it/s, lr=6.68e-05, loss=6.9431]Finding LR:  43%|████▎     | 86/200 [01:27<01:26,  1.31it/s, lr=7.41e-05, loss=6.9411]Finding LR:  44%|████▎     | 87/200 [01:27<01:25,  1.31it/s, lr=7.41e-05, loss=6.9411]Finding LR:  44%|████▎     | 87/200 [01:27<01:25,  1.31it/s, lr=8.22e-05, loss=6.9418]Finding LR:  44%|████▍     | 88/200 [01:27<01:25,  1.32it/s, lr=8.22e-05, loss=6.9418]Finding LR:  44%|████▍     | 88/200 [01:28<01:25,  1.32it/s, lr=9.12e-05, loss=6.9415]Finding LR:  44%|████▍     | 89/200 [01:28<01:24,  1.32it/s, lr=9.12e-05, loss=6.9415]Finding LR:  44%|████▍     | 89/200 [01:29<01:24,  1.32it/s, lr=1.01e-04, loss=6.9410]Finding LR:  45%|████▌     | 90/200 [01:29<01:23,  1.32it/s, lr=1.01e-04, loss=6.9410]Finding LR:  45%|████▌     | 90/200 [01:30<01:23,  1.32it/s, lr=1.12e-04, loss=6.9414]Finding LR:  46%|████▌     | 91/200 [01:30<01:22,  1.32it/s, lr=1.12e-04, loss=6.9414]Finding LR:  46%|████▌     | 91/200 [01:30<01:22,  1.32it/s, lr=1.24e-04, loss=6.9406]Finding LR:  46%|████▌     | 92/200 [01:30<01:22,  1.32it/s, lr=1.24e-04, loss=6.9406]Finding LR:  46%|████▌     | 92/200 [01:31<01:22,  1.32it/s, lr=1.38e-04, loss=6.9405]Finding LR:  46%|████▋     | 93/200 [01:31<01:21,  1.32it/s, lr=1.38e-04, loss=6.9405]Finding LR:  46%|████▋     | 93/200 [01:32<01:21,  1.32it/s, lr=1.53e-04, loss=6.9414]Finding LR:  47%|████▋     | 94/200 [01:32<01:20,  1.31it/s, lr=1.53e-04, loss=6.9414]Finding LR:  47%|████▋     | 94/200 [01:33<01:20,  1.31it/s, lr=1.70e-04, loss=6.9411]Finding LR:  48%|████▊     | 95/200 [01:33<01:19,  1.32it/s, lr=1.70e-04, loss=6.9411]Finding LR:  48%|████▊     | 95/200 [01:33<01:19,  1.32it/s, lr=1.88e-04, loss=6.9414]Finding LR:  48%|████▊     | 96/200 [01:33<01:19,  1.31it/s, lr=1.88e-04, loss=6.9414]Finding LR:  48%|████▊     | 96/200 [01:34<01:19,  1.31it/s, lr=2.09e-04, loss=6.9413]Finding LR:  48%|████▊     | 97/200 [01:34<01:18,  1.32it/s, lr=2.09e-04, loss=6.9413]Finding LR:  48%|████▊     | 97/200 [01:35<01:18,  1.32it/s, lr=2.32e-04, loss=6.9405]Finding LR:  49%|████▉     | 98/200 [01:35<01:17,  1.32it/s, lr=2.32e-04, loss=6.9405]Finding LR:  49%|████▉     | 98/200 [01:36<01:17,  1.32it/s, lr=2.57e-04, loss=6.9395]Finding LR:  50%|████▉     | 99/200 [01:36<01:16,  1.32it/s, lr=2.57e-04, loss=6.9395]Finding LR:  50%|████▉     | 99/200 [01:36<01:16,  1.32it/s, lr=2.85e-04, loss=6.9395]Finding LR:  50%|█████     | 100/200 [01:36<01:16,  1.31it/s, lr=2.85e-04, loss=6.9395]Finding LR:  50%|█████     | 100/200 [01:37<01:16,  1.31it/s, lr=3.16e-04, loss=6.9403]Finding LR:  50%|█████     | 101/200 [01:37<01:15,  1.32it/s, lr=3.16e-04, loss=6.9403]Finding LR:  50%|█████     | 101/200 [01:38<01:15,  1.32it/s, lr=3.51e-04, loss=6.9397]Finding LR:  51%|█████     | 102/200 [01:38<01:14,  1.32it/s, lr=3.51e-04, loss=6.9397]Finding LR:  51%|█████     | 102/200 [01:39<01:14,  1.32it/s, lr=3.89e-04, loss=6.9392]Finding LR:  52%|█████▏    | 103/200 [01:39<01:13,  1.31it/s, lr=3.89e-04, loss=6.9392]Finding LR:  52%|█████▏    | 103/200 [01:39<01:13,  1.31it/s, lr=4.32e-04, loss=6.9386]Finding LR:  52%|█████▏    | 104/200 [01:39<01:12,  1.32it/s, lr=4.32e-04, loss=6.9386]Finding LR:  52%|█████▏    | 104/200 [01:40<01:12,  1.32it/s, lr=4.79e-04, loss=6.9383]Finding LR:  52%|█████▎    | 105/200 [01:40<01:12,  1.31it/s, lr=4.79e-04, loss=6.9383]Finding LR:  52%|█████▎    | 105/200 [01:41<01:12,  1.31it/s, lr=5.31e-04, loss=6.9388]Finding LR:  53%|█████▎    | 106/200 [01:41<01:11,  1.32it/s, lr=5.31e-04, loss=6.9388]Finding LR:  53%|█████▎    | 106/200 [01:42<01:11,  1.32it/s, lr=5.89e-04, loss=6.9380]Finding LR:  54%|█████▎    | 107/200 [01:42<01:10,  1.31it/s, lr=5.89e-04, loss=6.9380]Finding LR:  54%|█████▎    | 107/200 [01:43<01:10,  1.31it/s, lr=6.53e-04, loss=6.9389]Finding LR:  54%|█████▍    | 108/200 [01:43<01:09,  1.31it/s, lr=6.53e-04, loss=6.9389]Finding LR:  54%|█████▍    | 108/200 [01:43<01:09,  1.31it/s, lr=7.24e-04, loss=6.9385]Finding LR:  55%|█████▍    | 109/200 [01:43<01:09,  1.32it/s, lr=7.24e-04, loss=6.9385]Finding LR:  55%|█████▍    | 109/200 [01:44<01:09,  1.32it/s, lr=8.04e-04, loss=6.9377]Finding LR:  55%|█████▌    | 110/200 [01:44<01:08,  1.32it/s, lr=8.04e-04, loss=6.9377]Finding LR:  55%|█████▌    | 110/200 [01:45<01:08,  1.32it/s, lr=8.91e-04, loss=6.9386]Finding LR:  56%|█████▌    | 111/200 [01:45<01:07,  1.31it/s, lr=8.91e-04, loss=6.9386]Finding LR:  56%|█████▌    | 111/200 [01:46<01:07,  1.31it/s, lr=9.89e-04, loss=6.9391]Finding LR:  56%|█████▌    | 112/200 [01:46<01:06,  1.32it/s, lr=9.89e-04, loss=6.9391]Finding LR:  56%|█████▌    | 112/200 [01:46<01:06,  1.32it/s, lr=1.10e-03, loss=6.9385]Finding LR:  56%|█████▋    | 113/200 [01:46<01:06,  1.32it/s, lr=1.10e-03, loss=6.9385]Finding LR:  56%|█████▋    | 113/200 [01:47<01:06,  1.32it/s, lr=1.22e-03, loss=6.9389]Finding LR:  57%|█████▋    | 114/200 [01:47<01:05,  1.31it/s, lr=1.22e-03, loss=6.9389]Finding LR:  57%|█████▋    | 114/200 [01:48<01:05,  1.31it/s, lr=1.35e-03, loss=6.9383]Finding LR:  57%|█████▊    | 115/200 [01:48<01:04,  1.31it/s, lr=1.35e-03, loss=6.9383]Finding LR:  57%|█████▊    | 115/200 [01:49<01:04,  1.31it/s, lr=1.50e-03, loss=6.9382]Finding LR:  58%|█████▊    | 116/200 [01:49<01:03,  1.32it/s, lr=1.50e-03, loss=6.9382]Finding LR:  58%|█████▊    | 116/200 [01:49<01:03,  1.32it/s, lr=1.66e-03, loss=6.9380]Finding LR:  58%|█████▊    | 117/200 [01:49<01:03,  1.32it/s, lr=1.66e-03, loss=6.9380]Finding LR:  58%|█████▊    | 117/200 [01:50<01:03,  1.32it/s, lr=1.84e-03, loss=6.9373]Finding LR:  59%|█████▉    | 118/200 [01:50<01:02,  1.32it/s, lr=1.84e-03, loss=6.9373]Finding LR:  59%|█████▉    | 118/200 [01:51<01:02,  1.32it/s, lr=2.04e-03, loss=6.9377]Finding LR:  60%|█████▉    | 119/200 [01:51<01:01,  1.32it/s, lr=2.04e-03, loss=6.9377]Finding LR:  60%|█████▉    | 119/200 [01:52<01:01,  1.32it/s, lr=2.26e-03, loss=6.9378]Finding LR:  60%|██████    | 120/200 [01:52<01:00,  1.32it/s, lr=2.26e-03, loss=6.9378]Finding LR:  60%|██████    | 120/200 [01:52<01:00,  1.32it/s, lr=2.51e-03, loss=6.9379]Finding LR:  60%|██████    | 121/200 [01:52<01:00,  1.31it/s, lr=2.51e-03, loss=6.9379]Finding LR:  60%|██████    | 121/200 [01:53<01:00,  1.31it/s, lr=2.79e-03, loss=6.9370]Finding LR:  61%|██████    | 122/200 [01:53<00:59,  1.32it/s, lr=2.79e-03, loss=6.9370]Finding LR:  61%|██████    | 122/200 [01:54<00:59,  1.32it/s, lr=3.09e-03, loss=6.9371]Finding LR:  62%|██████▏   | 123/200 [01:54<00:58,  1.32it/s, lr=3.09e-03, loss=6.9371]Finding LR:  62%|██████▏   | 123/200 [01:55<00:58,  1.32it/s, lr=3.43e-03, loss=6.9366]Finding LR:  62%|██████▏   | 124/200 [01:55<00:57,  1.32it/s, lr=3.43e-03, loss=6.9366]Finding LR:  62%|██████▏   | 124/200 [01:55<00:57,  1.32it/s, lr=3.80e-03, loss=6.9372]Finding LR:  62%|██████▎   | 125/200 [01:55<00:57,  1.32it/s, lr=3.80e-03, loss=6.9372]Finding LR:  62%|██████▎   | 125/200 [01:56<00:57,  1.32it/s, lr=4.22e-03, loss=6.9361]Finding LR:  63%|██████▎   | 126/200 [01:56<00:56,  1.32it/s, lr=4.22e-03, loss=6.9361]Finding LR:  63%|██████▎   | 126/200 [01:57<00:56,  1.32it/s, lr=4.68e-03, loss=6.9353]Finding LR:  64%|██████▎   | 127/200 [01:57<00:55,  1.31it/s, lr=4.68e-03, loss=6.9353]Finding LR:  64%|██████▎   | 127/200 [01:58<00:55,  1.31it/s, lr=5.19e-03, loss=6.9352]Finding LR:  64%|██████▍   | 128/200 [01:58<00:54,  1.31it/s, lr=5.19e-03, loss=6.9352]Finding LR:  64%|██████▍   | 128/200 [01:58<00:54,  1.31it/s, lr=5.75e-03, loss=6.9347]Finding LR:  64%|██████▍   | 129/200 [01:58<00:53,  1.32it/s, lr=5.75e-03, loss=6.9347]Finding LR:  64%|██████▍   | 129/200 [01:59<00:53,  1.32it/s, lr=6.38e-03, loss=6.9340]Finding LR:  65%|██████▌   | 130/200 [01:59<00:53,  1.31it/s, lr=6.38e-03, loss=6.9340]Finding LR:  65%|██████▌   | 130/200 [02:00<00:53,  1.31it/s, lr=7.08e-03, loss=6.9332]Finding LR:  66%|██████▌   | 131/200 [02:00<00:52,  1.32it/s, lr=7.08e-03, loss=6.9332]Finding LR:  66%|██████▌   | 131/200 [02:01<00:52,  1.32it/s, lr=7.85e-03, loss=6.9328]Finding LR:  66%|██████▌   | 132/200 [02:01<00:51,  1.32it/s, lr=7.85e-03, loss=6.9328]Finding LR:  66%|██████▌   | 132/200 [02:02<00:51,  1.32it/s, lr=8.71e-03, loss=6.9329]Finding LR:  66%|██████▋   | 133/200 [02:02<00:50,  1.32it/s, lr=8.71e-03, loss=6.9329]Finding LR:  66%|██████▋   | 133/200 [02:02<00:50,  1.32it/s, lr=9.66e-03, loss=6.9331]Finding LR:  67%|██████▋   | 134/200 [02:02<00:50,  1.32it/s, lr=9.66e-03, loss=6.9331]Finding LR:  67%|██████▋   | 134/200 [02:03<00:50,  1.32it/s, lr=1.07e-02, loss=6.9315]Finding LR:  68%|██████▊   | 135/200 [02:03<00:49,  1.32it/s, lr=1.07e-02, loss=6.9315]Finding LR:  68%|██████▊   | 135/200 [02:04<00:49,  1.32it/s, lr=1.19e-02, loss=6.9304]Finding LR:  68%|██████▊   | 136/200 [02:04<00:48,  1.31it/s, lr=1.19e-02, loss=6.9304]Finding LR:  68%|██████▊   | 136/200 [02:05<00:48,  1.31it/s, lr=1.32e-02, loss=6.9304]Finding LR:  68%|██████▊   | 137/200 [02:05<00:47,  1.32it/s, lr=1.32e-02, loss=6.9304]Finding LR:  68%|██████▊   | 137/200 [02:05<00:47,  1.32it/s, lr=1.46e-02, loss=6.9290]Finding LR:  69%|██████▉   | 138/200 [02:05<00:47,  1.31it/s, lr=1.46e-02, loss=6.9290]Finding LR:  69%|██████▉   | 138/200 [02:06<00:47,  1.31it/s, lr=1.62e-02, loss=6.9278]Finding LR:  70%|██████▉   | 139/200 [02:06<00:46,  1.32it/s, lr=1.62e-02, loss=6.9278]Finding LR:  70%|██████▉   | 139/200 [02:07<00:46,  1.32it/s, lr=1.80e-02, loss=6.9261]Finding LR:  70%|███████   | 140/200 [02:07<00:45,  1.31it/s, lr=1.80e-02, loss=6.9261]Finding LR:  70%|███████   | 140/200 [02:08<00:45,  1.31it/s, lr=2.00e-02, loss=6.9261]Finding LR:  70%|███████   | 141/200 [02:08<00:44,  1.32it/s, lr=2.00e-02, loss=6.9261]Finding LR:  70%|███████   | 141/200 [02:08<00:44,  1.32it/s, lr=2.21e-02, loss=6.9258]Finding LR:  71%|███████   | 142/200 [02:08<00:44,  1.31it/s, lr=2.21e-02, loss=6.9258]Finding LR:  71%|███████   | 142/200 [02:09<00:44,  1.31it/s, lr=2.45e-02, loss=6.9251]Finding LR:  72%|███████▏  | 143/200 [02:09<00:43,  1.31it/s, lr=2.45e-02, loss=6.9251]Finding LR:  72%|███████▏  | 143/200 [02:10<00:43,  1.31it/s, lr=2.72e-02, loss=6.9251]Finding LR:  72%|███████▏  | 144/200 [02:10<00:42,  1.32it/s, lr=2.72e-02, loss=6.9251]Finding LR:  72%|███████▏  | 144/200 [02:11<00:42,  1.32it/s, lr=3.02e-02, loss=6.9229]Finding LR:  72%|███████▎  | 145/200 [02:11<00:41,  1.32it/s, lr=3.02e-02, loss=6.9229]Finding LR:  72%|███████▎  | 145/200 [02:11<00:41,  1.32it/s, lr=3.35e-02, loss=6.9210]Finding LR:  73%|███████▎  | 146/200 [02:11<00:41,  1.31it/s, lr=3.35e-02, loss=6.9210]Finding LR:  73%|███████▎  | 146/200 [02:12<00:41,  1.31it/s, lr=3.72e-02, loss=6.9189]Finding LR:  74%|███████▎  | 147/200 [02:12<00:40,  1.32it/s, lr=3.72e-02, loss=6.9189]Finding LR:  74%|███████▎  | 147/200 [02:13<00:40,  1.32it/s, lr=4.12e-02, loss=6.9192]Finding LR:  74%|███████▍  | 148/200 [02:13<00:39,  1.32it/s, lr=4.12e-02, loss=6.9192]Finding LR:  74%|███████▍  | 148/200 [02:14<00:39,  1.32it/s, lr=4.57e-02, loss=6.9208]Finding LR:  74%|███████▍  | 149/200 [02:14<00:38,  1.32it/s, lr=4.57e-02, loss=6.9208]Finding LR:  74%|███████▍  | 149/200 [02:14<00:38,  1.32it/s, lr=5.07e-02, loss=6.9219]Finding LR:  75%|███████▌  | 150/200 [02:14<00:38,  1.32it/s, lr=5.07e-02, loss=6.9219]Finding LR:  75%|███████▌  | 150/200 [02:15<00:38,  1.32it/s, lr=5.62e-02, loss=6.9196]Finding LR:  76%|███████▌  | 151/200 [02:15<00:37,  1.32it/s, lr=5.62e-02, loss=6.9196]Finding LR:  76%|███████▌  | 151/200 [02:16<00:37,  1.32it/s, lr=6.24e-02, loss=6.9186]Finding LR:  76%|███████▌  | 152/200 [02:16<00:36,  1.32it/s, lr=6.24e-02, loss=6.9186]Finding LR:  76%|███████▌  | 152/200 [02:17<00:36,  1.32it/s, lr=6.92e-02, loss=6.9221]Finding LR:  76%|███████▋  | 153/200 [02:17<00:35,  1.32it/s, lr=6.92e-02, loss=6.9221]Finding LR:  76%|███████▋  | 153/200 [02:17<00:35,  1.32it/s, lr=7.67e-02, loss=6.9236]Finding LR:  77%|███████▋  | 154/200 [02:17<00:34,  1.32it/s, lr=7.67e-02, loss=6.9236]Finding LR:  77%|███████▋  | 154/200 [02:18<00:34,  1.32it/s, lr=8.51e-02, loss=6.9259]Finding LR:  78%|███████▊  | 155/200 [02:18<00:34,  1.31it/s, lr=8.51e-02, loss=6.9259]Finding LR:  78%|███████▊  | 155/200 [02:19<00:34,  1.31it/s, lr=9.44e-02, loss=6.9288]Finding LR:  78%|███████▊  | 156/200 [02:19<00:33,  1.31it/s, lr=9.44e-02, loss=6.9288]Finding LR:  78%|███████▊  | 156/200 [02:20<00:33,  1.31it/s, lr=1.05e-01, loss=6.9267]Finding LR:  78%|███████▊  | 157/200 [02:20<00:32,  1.32it/s, lr=1.05e-01, loss=6.9267]Finding LR:  78%|███████▊  | 157/200 [02:21<00:32,  1.32it/s, lr=1.16e-01, loss=6.9322]Finding LR:  79%|███████▉  | 158/200 [02:21<00:31,  1.32it/s, lr=1.16e-01, loss=6.9322]Finding LR:  79%|███████▉  | 158/200 [02:21<00:31,  1.32it/s, lr=1.29e-01, loss=6.9339]Finding LR:  80%|███████▉  | 159/200 [02:21<00:31,  1.32it/s, lr=1.29e-01, loss=6.9339]Finding LR:  80%|███████▉  | 159/200 [02:22<00:31,  1.32it/s, lr=1.43e-01, loss=6.9388]Finding LR:  80%|████████  | 160/200 [02:22<00:30,  1.31it/s, lr=1.43e-01, loss=6.9388]Finding LR:  80%|████████  | 160/200 [02:23<00:30,  1.31it/s, lr=1.58e-01, loss=6.9439]Finding LR:  80%|████████  | 161/200 [02:23<00:29,  1.31it/s, lr=1.58e-01, loss=6.9439]Finding LR:  80%|████████  | 161/200 [02:24<00:29,  1.31it/s, lr=1.76e-01, loss=6.9512]Finding LR:  81%|████████  | 162/200 [02:24<00:28,  1.32it/s, lr=1.76e-01, loss=6.9512]Finding LR:  81%|████████  | 162/200 [02:24<00:28,  1.32it/s, lr=1.95e-01, loss=6.9611]Finding LR:  82%|████████▏ | 163/200 [02:24<00:28,  1.32it/s, lr=1.95e-01, loss=6.9611]Finding LR:  82%|████████▏ | 163/200 [02:25<00:28,  1.32it/s, lr=2.16e-01, loss=6.9720]Finding LR:  82%|████████▏ | 164/200 [02:25<00:27,  1.32it/s, lr=2.16e-01, loss=6.9720]Finding LR:  82%|████████▏ | 164/200 [02:26<00:27,  1.32it/s, lr=2.40e-01, loss=6.9869]Finding LR:  82%|████████▎ | 165/200 [02:26<00:26,  1.32it/s, lr=2.40e-01, loss=6.9869]Finding LR:  82%|████████▎ | 165/200 [02:27<00:26,  1.32it/s, lr=2.66e-01, loss=6.9961]Finding LR:  83%|████████▎ | 166/200 [02:27<00:25,  1.32it/s, lr=2.66e-01, loss=6.9961]Finding LR:  83%|████████▎ | 166/200 [02:27<00:25,  1.32it/s, lr=2.95e-01, loss=7.0054]Finding LR:  84%|████████▎ | 167/200 [02:27<00:25,  1.32it/s, lr=2.95e-01, loss=7.0054]Finding LR:  84%|████████▎ | 167/200 [02:28<00:25,  1.32it/s, lr=3.27e-01, loss=7.0279]Finding LR:  84%|████████▍ | 168/200 [02:28<00:24,  1.31it/s, lr=3.27e-01, loss=7.0279]Finding LR:  84%|████████▍ | 168/200 [02:29<00:24,  1.31it/s, lr=3.63e-01, loss=7.0406]Finding LR:  84%|████████▍ | 169/200 [02:29<00:23,  1.32it/s, lr=3.63e-01, loss=7.0406]Finding LR:  84%|████████▍ | 169/200 [02:30<00:23,  1.32it/s, lr=4.03e-01, loss=7.0609]Finding LR:  85%|████████▌ | 170/200 [02:30<00:22,  1.32it/s, lr=4.03e-01, loss=7.0609]Finding LR:  85%|████████▌ | 170/200 [02:30<00:22,  1.32it/s, lr=4.47e-01, loss=7.0769]Finding LR:  86%|████████▌ | 171/200 [02:30<00:22,  1.32it/s, lr=4.47e-01, loss=7.0769]Finding LR:  86%|████████▌ | 171/200 [02:31<00:22,  1.32it/s, lr=4.95e-01, loss=7.0932]Finding LR:  86%|████████▌ | 172/200 [02:31<00:21,  1.32it/s, lr=4.95e-01, loss=7.0932]Finding LR:  86%|████████▌ | 172/200 [02:32<00:21,  1.32it/s, lr=5.50e-01, loss=7.1152]Finding LR:  86%|████████▋ | 173/200 [02:32<00:20,  1.32it/s, lr=5.50e-01, loss=7.1152]Finding LR:  86%|████████▋ | 173/200 [02:33<00:20,  1.32it/s, lr=6.10e-01, loss=7.1265]Finding LR:  87%|████████▋ | 174/200 [02:33<00:19,  1.32it/s, lr=6.10e-01, loss=7.1265]Finding LR:  87%|████████▋ | 174/200 [02:33<00:19,  1.32it/s, lr=6.76e-01, loss=7.1390]Finding LR:  88%|████████▊ | 175/200 [02:33<00:18,  1.32it/s, lr=6.76e-01, loss=7.1390]Finding LR:  88%|████████▊ | 175/200 [02:34<00:18,  1.32it/s, lr=7.50e-01, loss=7.1524]Finding LR:  88%|████████▊ | 176/200 [02:34<00:18,  1.32it/s, lr=7.50e-01, loss=7.1524]Finding LR:  88%|████████▊ | 176/200 [02:35<00:18,  1.32it/s, lr=8.32e-01, loss=7.1640]Finding LR:  88%|████████▊ | 177/200 [02:35<00:17,  1.31it/s, lr=8.32e-01, loss=7.1640]Finding LR:  88%|████████▊ | 177/200 [02:36<00:17,  1.31it/s, lr=9.23e-01, loss=7.1791]Finding LR:  89%|████████▉ | 178/200 [02:36<00:16,  1.32it/s, lr=9.23e-01, loss=7.1791]Finding LR:  89%|████████▉ | 178/200 [02:36<00:16,  1.32it/s, lr=1.02e+00, loss=7.1786]Finding LR:  90%|████████▉ | 179/200 [02:36<00:15,  1.32it/s, lr=1.02e+00, loss=7.1786]Finding LR:  90%|████████▉ | 179/200 [02:37<00:15,  1.32it/s, lr=1.14e+00, loss=7.1741]Finding LR:  90%|█████████ | 180/200 [02:37<00:15,  1.32it/s, lr=1.14e+00, loss=7.1741]Finding LR:  90%|█████████ | 180/200 [02:38<00:15,  1.32it/s, lr=1.26e+00, loss=7.1631]Finding LR:  90%|█████████ | 181/200 [02:38<00:14,  1.32it/s, lr=1.26e+00, loss=7.1631]Finding LR:  90%|█████████ | 181/200 [02:39<00:14,  1.32it/s, lr=1.40e+00, loss=7.1522]Finding LR:  91%|█████████ | 182/200 [02:39<00:13,  1.32it/s, lr=1.40e+00, loss=7.1522]Finding LR:  91%|█████████ | 182/200 [02:40<00:13,  1.32it/s, lr=1.55e+00, loss=7.1383]Finding LR:  92%|█████████▏| 183/200 [02:40<00:12,  1.32it/s, lr=1.55e+00, loss=7.1383]Finding LR:  92%|█████████▏| 183/200 [02:40<00:12,  1.32it/s, lr=1.72e+00, loss=7.1249]Finding LR:  92%|█████████▏| 184/200 [02:40<00:12,  1.32it/s, lr=1.72e+00, loss=7.1249]Finding LR:  92%|█████████▏| 184/200 [02:41<00:12,  1.32it/s, lr=1.91e+00, loss=7.1123]Finding LR:  92%|█████████▎| 185/200 [02:41<00:11,  1.32it/s, lr=1.91e+00, loss=7.1123]Finding LR:  92%|█████████▎| 185/200 [02:42<00:11,  1.32it/s, lr=2.11e+00, loss=7.0997]Finding LR:  93%|█████████▎| 186/200 [02:42<00:10,  1.32it/s, lr=2.11e+00, loss=7.0997]Finding LR:  93%|█████████▎| 186/200 [02:43<00:10,  1.32it/s, lr=2.34e+00, loss=7.0897]Finding LR:  94%|█████████▎| 187/200 [02:43<00:09,  1.31it/s, lr=2.34e+00, loss=7.0897]Finding LR:  94%|█████████▎| 187/200 [02:43<00:09,  1.31it/s, lr=2.60e+00, loss=7.0782]Finding LR:  94%|█████████▍| 188/200 [02:43<00:09,  1.32it/s, lr=2.60e+00, loss=7.0782]Finding LR:  94%|█████████▍| 188/200 [02:44<00:09,  1.32it/s, lr=2.88e+00, loss=7.0694]Finding LR:  94%|█████████▍| 189/200 [02:44<00:08,  1.32it/s, lr=2.88e+00, loss=7.0694]Finding LR:  94%|█████████▍| 189/200 [02:45<00:08,  1.32it/s, lr=3.20e+00, loss=7.0598]Finding LR:  95%|█████████▌| 190/200 [02:45<00:07,  1.32it/s, lr=3.20e+00, loss=7.0598]Finding LR:  95%|█████████▌| 190/200 [02:46<00:07,  1.32it/s, lr=3.55e+00, loss=7.0528]Finding LR:  96%|█████████▌| 191/200 [02:46<00:06,  1.32it/s, lr=3.55e+00, loss=7.0528]Finding LR:  96%|█████████▌| 191/200 [02:46<00:06,  1.32it/s, lr=3.94e+00, loss=7.0457]Finding LR:  96%|█████████▌| 192/200 [02:46<00:06,  1.31it/s, lr=3.94e+00, loss=7.0457]Finding LR:  96%|█████████▌| 192/200 [02:47<00:06,  1.31it/s, lr=4.37e+00, loss=7.0389]Finding LR:  96%|█████████▋| 193/200 [02:47<00:05,  1.32it/s, lr=4.37e+00, loss=7.0389]Finding LR:  96%|█████████▋| 193/200 [02:48<00:05,  1.32it/s, lr=4.84e+00, loss=7.0315]Finding LR:  97%|█████████▋| 194/200 [02:48<00:04,  1.31it/s, lr=4.84e+00, loss=7.0315]Finding LR:  97%|█████████▋| 194/200 [02:49<00:04,  1.31it/s, lr=5.37e+00, loss=7.0237]Finding LR:  98%|█████████▊| 195/200 [02:49<00:03,  1.31it/s, lr=5.37e+00, loss=7.0237]Finding LR:  98%|█████████▊| 195/200 [02:49<00:03,  1.31it/s, lr=5.96e+00, loss=7.0175]Finding LR:  98%|█████████▊| 196/200 [02:49<00:03,  1.32it/s, lr=5.96e+00, loss=7.0175]Finding LR:  98%|█████████▊| 196/200 [02:50<00:03,  1.32it/s, lr=6.61e+00, loss=7.0118]Finding LR:  98%|█████████▊| 197/200 [02:50<00:02,  1.32it/s, lr=6.61e+00, loss=7.0118]Finding LR:  98%|█████████▊| 197/200 [02:51<00:02,  1.32it/s, lr=7.33e+00, loss=7.0058]Finding LR:  99%|█████████▉| 198/200 [02:51<00:01,  1.32it/s, lr=7.33e+00, loss=7.0058]Finding LR:  99%|█████████▉| 198/200 [02:52<00:01,  1.32it/s, lr=8.13e+00, loss=7.0007]Finding LR: 100%|█████████▉| 199/200 [02:52<00:00,  1.32it/s, lr=8.13e+00, loss=7.0007]Finding LR: 100%|█████████▉| 199/200 [02:52<00:00,  1.32it/s, lr=9.02e+00, loss=6.9935]Finding LR: 100%|██████████| 200/200 [02:52<00:00,  1.31it/s, lr=9.02e+00, loss=6.9935]Finding LR: 100%|██████████| 200/200 [02:52<00:00,  1.16it/s, lr=9.02e+00, loss=6.9935]
+2025-10-23 11:36:22,190 - INFO - Trainer initialized on device: cuda
+2025-10-23 11:36:22,190 - INFO - Mixed precision (AMP) enabled: True
+Traceback (most recent call last):
+  File "/home/ubuntu/ImageNet_training/ERAV4_Session9/main_1000classes.py", line 535, in <module>
+    history, top1_acc, top5_acc = main(args)
+                                  ^^^^^^^^^^
+  File "/home/ubuntu/ImageNet_training/ERAV4_Session9/main_1000classes.py", line 339, in main
+    history = trainer.train(
+              ^^^^^^^^^^^^^^
+TypeError: Trainer.train() got an unexpected keyword argument 'device'
+
+✓ LR finding complete!
+  Tested 200 learning rates
+  Loss range: [6.9186, 7.1791]
+
+✓ Model and optimizer restored to original state
+
+✓ LR finder plot saved to lr_finder_1000class.png
+
+📊 LR Finder Results:
+   Suggested initial_lr: 0.006237
+   Suggested max_lr:     0.062373
+
+======================================================================
+FINAL LEARNING RATES:
+  Initial LR: 0.006237
+  Max LR:     0.031187
+  Ratio:      5.0x
+======================================================================
+
+✓ Learning rates saved to lr_config_1000class.txt
+
+Reloading model with fresh weights...
+✓ Model reloaded with random initialization
+
+======================================================================
+CREATING OPTIMIZER AND SCHEDULER
+======================================================================
+Optimizer:           SGD with Nesterov momentum
+Scheduler:           OneCycleLR
+Initial LR:          0.006237
+Max LR:              0.031187
+Warmup:              40% of epochs (first 36 epochs)
+Final div factor:    1e+03
+Loss function:       CrossEntropyLoss (label_smoothing=0.1)
+Gradient clipping:   1.0
+Weight decay:        0.0001
+
+✓ Ready to start training!
+
+======================================================================
+STARTING TRAINING - ImageNet 1000 Classes
+======================================================================
+Target epochs:              90
+Goal:                       82%+ validation accuracy
+Training samples:           ~1.28M images
+Validation samples:         ~50K images
+Batch size:                 256
+Iterations per epoch:       5,005
+Total iterations:           450,450
+Augmentation:               medium
+Device:                     cuda
+======================================================================
+
+⏰ Training will take 7-15 hours depending on GPU.
+📊 Progress will be displayed after each epoch.
+💾 Checkpoints saved every 5 epochs + best model.
+
+🚀 Starting training now...
+
+======================================================================
+
+
+
+❌ Training failed with error:
+  Trainer.train() got an unexpected keyword argument 'device'
