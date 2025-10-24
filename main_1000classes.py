@@ -179,13 +179,57 @@ def main(args):
     print(f"Total parameters:      {stats['total_parameters']:,}")
     print(f"Trainable parameters:  {stats['trainable_parameters']:,}")
     print(f"Model size:            {stats['model_size_mb']:.2f} MB")
-    print(f"Training from:         Scratch (random initialization)")
+
+    # ========================================================================
+    # RESUME FROM CHECKPOINT (Optional)
+    # ========================================================================
+    start_epoch = 0
+    resume_checkpoint_path = None
+
+    if args.resume or args.resume_epoch:
+        print_banner("RESUMING FROM CHECKPOINT")
+
+        # Determine checkpoint path
+        if args.resume:
+            resume_checkpoint_path = Path(args.resume)
+        elif args.resume_epoch:
+            resume_checkpoint_path = Path(config['checkpoint_dir']) / f'checkpoint_epoch_{args.resume_epoch}.pth'
+
+        if not resume_checkpoint_path.exists():
+            print(f"❌ ERROR: Checkpoint not found at: {resume_checkpoint_path}")
+            print(f"\nAvailable checkpoints:")
+            checkpoint_dir = Path(config['checkpoint_dir'])
+            if checkpoint_dir.exists():
+                checkpoints = sorted(checkpoint_dir.glob('checkpoint_epoch_*.pth'))
+                if checkpoints:
+                    for cp in checkpoints:
+                        print(f"  - {cp.name}")
+                else:
+                    print(f"  No checkpoints found in {checkpoint_dir}")
+            sys.exit(1)
+
+        print(f"Loading checkpoint: {resume_checkpoint_path}")
+        checkpoint = torch.load(resume_checkpoint_path, map_location=device)
+
+        # Load model state
+        model.load_state_dict(checkpoint['model_state_dict'])
+        start_epoch = checkpoint['epoch'] + 1
+
+        print(f"✓ Model loaded from epoch {checkpoint['epoch']}")
+        print(f"  Best accuracy so far: {checkpoint.get('best_acc', 'N/A')}")
+        print(f"  Resuming from epoch: {start_epoch}")
+        print(f"  Training from:       RESUMED (loaded weights)")
+    else:
+        print(f"Training from:         Scratch (random initialization)")
+
     print(f"\n✓ Model created and moved to {device}")
 
     # ========================================================================
     # LEARNING RATE FINDER (Optional)
     # ========================================================================
-    if config['find_lr']:
+    run_lr_finder = config['find_lr'] or (args.find_lr_on_resume and start_epoch > 0)
+
+    if run_lr_finder:
         print_banner("LEARNING RATE FINDER - 1000 Classes")
         print("Running LR range test to find optimal learning rates...")
         print(f"This will take ~15-20 minutes on AWS GPU.")
@@ -335,6 +379,12 @@ def main(args):
 
     start_time = time.time()
 
+    # Determine best accuracy if resuming
+    best_acc_so_far = 0.0
+    if start_epoch > 0 and resume_checkpoint_path:
+        best_acc_so_far = checkpoint.get('best_acc', 0.0)
+        print(f"📊 Resuming with best accuracy: {best_acc_so_far:.2f}%")
+
     # Train the model
     history = trainer.train(
         model=model,
@@ -342,11 +392,10 @@ def main(args):
         val_loader=val_loader,
         criterion=criterion,
         optimizer=optimizer,
-        #scheduler=scheduler,
-        scheduler=None,
+        scheduler=None,  # No scheduler if --no-scheduler flag is set
         num_epochs=config['num_epochs'],
-        #device=device,
-        #save_frequency=config['save_frequency']
+        start_epoch=start_epoch,
+        best_acc=best_acc_so_far
     )
 
     end_time = time.time()
@@ -522,6 +571,16 @@ if __name__ == "__main__":
                         help='OneCycleLR warmup percentage (default: 0.4)')
     parser.add_argument('--final-div-factor', type=float, default=1e3,
                         help='OneCycleLR final div factor (default: 1e3)')
+
+    # Resume arguments
+    parser.add_argument('--resume', type=str, default=None,
+                        help='Path to checkpoint to resume from (e.g., checkpoints_1000class/checkpoint_epoch_17.pth)')
+    parser.add_argument('--resume-epoch', type=int, default=None,
+                        help='Resume from specific epoch number (will auto-find checkpoint)')
+    parser.add_argument('--find-lr-on-resume', action='store_true',
+                        help='Run LR finder when resuming (recommended)')
+    parser.add_argument('--no-scheduler', action='store_true',
+                        help='Train without scheduler (constant LR)')
 
     # Other arguments
     parser.add_argument('--checkpoint-dir', type=str, default='./checkpoints_1000class',
