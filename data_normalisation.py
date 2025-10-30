@@ -36,7 +36,7 @@ def get_train_transforms(advanced_augmentation=True, augmentation_strength='medi
         if augmentation_strength == 'light':
             # Light augmentation - better for small datasets
             train_transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.5, 1.0)),  # Less aggressive crop
+                transforms.RandomResizedCrop(224, scale=(0.875, 1.0)),  # Less aggressive crop
                 transforms.RandomHorizontalFlip(),
                 transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1),  # Subtle color changes
                 transforms.ToTensor(),
@@ -45,17 +45,17 @@ def get_train_transforms(advanced_augmentation=True, augmentation_strength='medi
         elif augmentation_strength == 'medium':
             # Medium augmentation - balanced
             train_transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.3, 1.0)),
+                transforms.RandomResizedCrop(224, scale=(0.5, 1.0)),
                 transforms.RandomHorizontalFlip(),
                 transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05),
                 transforms.ToTensor(),
                 normalize,
-                transforms.RandomErasing(p=0.1, scale=(0.02, 0.2))  # Reduced erasing
+                transforms.RandomErasing(p=0.1, scale=(0.02, 0.05))  # Reduced erasing
             ])
         else:  # heavy
             # Heavy augmentation - for large datasets only
             train_transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.08, 1.0)),
+                transforms.RandomResizedCrop(224, scale=(0.3, 1.0)),
                 transforms.RandomHorizontalFlip(),
                 transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1),
                 transforms.RandomGrayscale(p=0.1),

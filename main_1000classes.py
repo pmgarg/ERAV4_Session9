@@ -53,23 +53,23 @@ def main(args):
 
         # Training Configuration
         'num_epochs': args.epochs or 60,
-        'batch_size': args.batch_size or 256,
+        'batch_size': 128, #args.batch_size or 256,
         'num_workers': args.num_workers or 8,
         'pin_memory': True,
 
         # Augmentation
-        'augmentation_strength': args.augmentation or 'medium',
+        'augmentation_strength': 'medium', #args.augmentation or 'heavy',
 
         # Learning Rate Configuration
-        'find_lr': False, #args.find_lr,
-        'initial_lr': 6.19e-04, #0.00063680,#2.522e-04, #0.002522, #0.063680, #args.initial_lr or 0.05,
-        'max_lr': 1.024401, #args.max_lr or 0.3,
-        'lr_finder_iterations': 2500,
+        'find_lr': args.find_lr,
+        'initial_lr': 0.00004186,#2.52e-03, #6.19e-04,#args.initial_lr if args.initial_lr is not None else 6.19e-04,
+        'max_lr': 2.52e-03,#0.001046474000509319, #0.00322, #args.max_lr if args.max_lr is not None else 1.024401,
+        'lr_finder_iterations': 3000,
 
         # Regularization
         'weight_decay': 1e-4,
         'label_smoothing': 0.0,
-        'max_grad_norm': 1.0,
+        'max_grad_norm': None, #1.0,
 
         # Model Configuration
         'zero_init_residual': True,
@@ -145,6 +145,9 @@ def main(args):
         print(f"  Training batches: {len(train_loader):,}")
         print(f"  Validation batches: {len(val_loader):,}")
         print(f"  Augmentation strength: {config['augmentation_strength']}")
+        if config['augmentation_strength'] == 'heavy':
+            print("  Heavy pipeline: RandomResizedCrop(0.08-1.0) + ColorJitter(0.4) + RandomGrayscale(10%) + RandomErasing(20%)")
+            print("  Designed to squeeze extra accuracy when total epochs are limited.")
         print(f"\n  With batch size {config['batch_size']}:")
         print(f"    ~{len(train_loader)} iterations per epoch")
         print(f"    ~{len(train_loader) * config['num_epochs']:,} total iterations")
@@ -185,6 +188,7 @@ def main(args):
     # ========================================================================
     start_epoch = 0
     resume_checkpoint_path = None
+    checkpoint = None
 
     if args.resume or args.resume_epoch:
         print_banner("RESUMING FROM CHECKPOINT")
@@ -252,10 +256,18 @@ def main(args):
             num_iter=config['lr_finder_iterations']
         )
 
-        # Save plot
+        # Save plot without blocking interactive execution (plt.show() blocks on macOS)
         try:
-            lr_finder.plot(lrs, losses, initial_lr=suggested_initial_lr, max_lr=suggested_max_lr)
-            print("✓ LR finder plot saved to lr_finder_1000class.png")
+            plot_path = Path("lr_finder_1000class.png")
+            lr_finder.plot(
+                lrs,
+                losses,
+                initial_lr=suggested_initial_lr,
+                max_lr=suggested_max_lr,
+                save_path=str(plot_path),
+                show=False
+            )
+            print(f"✓ LR finder plot saved to {plot_path}")
         except Exception as e:
             print(f"⚠️  Could not save plot (matplotlib issue): {e}")
 
@@ -281,29 +293,27 @@ def main(args):
         # For constant LR training (no scheduler), use the suggested max_lr
         # Optionally divide by 2 for more conservative approach
         if args.no_scheduler:
-            # For constant LR, use suggested_max_lr directly or reduced
-            #config['initial_lr'] = suggested_initial_lr
-            config['initial_lr'] = suggested_max_lr * 0.7  # More conservative for constant LR
-            config['max_lr'] = suggested_max_lr * 0.7
+            # For constant LR runs just use the safe initial LR
+            config['initial_lr'] = suggested_initial_lr
+            config['max_lr'] = suggested_max_lr
             print(f"\n💡 Using constant LR (no scheduler): {config['initial_lr']:.6f}")
-            print(f"   (70% of suggested max_lr for stability)")
         else:
-            # For scheduler, use full range
-            config['initial_lr'] = suggested_max_lr * 0.7  # More conservative for constant LR
-            #config['initial_lr'] = suggested_initial_lr
-            config['max_lr'] = suggested_max_lr / 2
+            # OneCycleLR expects base lr = max_lr / div_factor
+            config['max_lr'] = suggested_max_lr
+            config['initial_lr'] = suggested_initial_lr
+            #config['initial_lr'] = config['max_lr'] / config['div_factor']
             print(f"\n💡 Using LR range for scheduler:")
-            print(f"   Initial LR: {config['initial_lr']:.6f}")
-            print(f"   Max LR:     {config['max_lr']:.6f}")
+            print(f"   Base LR (max/div): {config['initial_lr']:.6f}")
+            print(f"   Max LR:            {config['max_lr']:.6f}")
 
         print(f"\n" + "=" * 70)
         print(f"FINAL LEARNING RATE CONFIGURATION:")
         if args.no_scheduler:
             print(f"  Constant LR:    {config['initial_lr']:.6f}")
         else:
-            print(f"  Initial LR:     {config['initial_lr']:.6f}")
+            print(f"  Base LR:        {config['initial_lr']:.6f}")
             print(f"  Max LR:         {config['max_lr']:.6f}")
-            print(f"  Ratio:          {config['max_lr']/config['initial_lr']:.1f}x")
+            print(f"  Div factor:     {config['div_factor']:.1f}")
         print("=" * 70)
 
         # Save LR values
@@ -332,6 +342,42 @@ def main(args):
         print(f"  Max LR:     {config['max_lr']}")
         print("\n⚠️  For 1000-class training, LR finder is HIGHLY RECOMMENDED!")
 
+    # If LR finder did not run, fall back to the latest saved LR config when available
+    lr_config_path = Path('lr_config_1000class.txt')
+    if not run_lr_finder and lr_config_path.exists():
+        try:
+            stored_values = {}
+            with open(lr_config_path) as f:
+                for line in f:
+                    if '=' in line:
+                        key, value = line.strip().split('=', 1)
+                        stored_values[key.strip()] = float(value)
+
+            stored_initial = stored_values.get('FOUND_INITIAL_LR')
+            stored_max = stored_values.get('FOUND_MAX_LR')
+
+            if args.no_scheduler:
+                if stored_initial:
+                    config['initial_lr'] = stored_initial
+                    config['max_lr'] = stored_initial
+                    print(f"\n✓ Loaded constant LR {config['initial_lr']:.6f} from {lr_config_path}")
+            else:
+                if stored_max:
+                    config['max_lr'] = stored_max
+                    config['initial_lr'] = config['max_lr'] / config['div_factor']
+                    print(f"\n✓ Loaded OneCycle max LR {config['max_lr']:.6f} from {lr_config_path}")
+                elif stored_initial:
+                    config['initial_lr'] = stored_initial
+                    config['max_lr'] = config['initial_lr'] * config['div_factor']
+                    print(f"\n✓ Reconstructed max LR {config['max_lr']:.6f} from base {config['initial_lr']:.6f}")
+        except Exception as e:
+            print(f"\n⚠️  Could not read LR config ({lr_config_path}): {e}")
+
+    if not args.no_scheduler and config['max_lr'] <= config['initial_lr']:
+        print("\n⚠️  Detected max_lr <= base lr. Adjusting to maintain OneCycle schedule.")
+        config['max_lr'] = max(config['initial_lr'] * config['div_factor'], config['max_lr'] * 10)
+        config['initial_lr'] = config['max_lr'] / config['div_factor']
+
     # ========================================================================
     # OPTIMIZER & SCHEDULER
     # ========================================================================
@@ -345,18 +391,35 @@ def main(args):
         weight_decay=config['weight_decay'],
         nesterov=True
     )
+    if checkpoint and 'optimizer_state_dict' in checkpoint:
+        try:
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            print("✓ Optimizer state loaded from checkpoint")
+        except Exception as e:
+            print(f"⚠️  Could not load optimizer state (will reset): {e}")
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = config['initial_lr']
 
-    # Scheduler: OneCycleLR
-    #scheduler = optim.lr_scheduler.OneCycleLR(
-    #    optimizer,
-    #    max_lr=config['max_lr'],
-    #    epochs=config['num_epochs'],
-    #    steps_per_epoch=len(train_loader),
-    #    pct_start=config['pct_start'],
-    #    anneal_strategy='cos',
-    #    div_factor=config['div_factor'],
-    #    final_div_factor=config['final_div_factor']
-    #)
+    remaining_epochs = config['num_epochs'] - start_epoch
+    if remaining_epochs <= 0:
+        print(f"\n✓ Nothing to train: start_epoch ({start_epoch}) >= target epochs ({config['num_epochs']}).")
+        sys.exit(0)
+
+    scheduler = None
+    if not args.no_scheduler:
+        scheduler_epochs = remaining_epochs
+        scheduler = optim.lr_scheduler.OneCycleLR(
+            optimizer,
+            max_lr=config['max_lr'],
+            epochs=scheduler_epochs,
+            steps_per_epoch=len(train_loader),
+            pct_start=config['pct_start'],
+            anneal_strategy='cos',
+            div_factor=config['div_factor'],
+            final_div_factor=config['final_div_factor']
+        )
+        if start_epoch > 0:
+            print(f"✓ OneCycleLR restarted for the remaining {scheduler_epochs} epochs (resume-aware).")
 
     # Loss function
     criterion = nn.CrossEntropyLoss(label_smoothing=config['label_smoothing'])
@@ -370,11 +433,15 @@ def main(args):
     )
 
     print(f"Optimizer:           SGD with Nesterov momentum")
-    print(f"Scheduler:           OneCycleLR")
-    print(f"Initial LR:          {config['initial_lr']:.6f}")
-    print(f"Max LR:              {config['max_lr']:.6f}")
-    print(f"Warmup:              {config['pct_start']*100:.0f}% of epochs (first {int(config['num_epochs']*config['pct_start'])} epochs)")
-    print(f"Final div factor:    {config['final_div_factor']:.0e}")
+    if not args.no_scheduler:
+        print(f"Scheduler:           OneCycleLR")
+        print(f"Base LR:             {config['initial_lr']:.6f}")
+        print(f"Max LR:              {config['max_lr']:.6f}")
+        print(f"Warmup:              {config['pct_start']*100:.0f}% of schedule (~{int(remaining_epochs*config['pct_start'])} epochs)")
+        print(f"Final div factor:    {config['final_div_factor']:.0e}")
+    else:
+        print(f"Scheduler:           Disabled (constant LR)")
+        print(f"Learning rate:       {config['initial_lr']:.6f}")
     print(f"Loss function:       CrossEntropyLoss (label_smoothing={config['label_smoothing']})")
     print(f"Gradient clipping:   {config['max_grad_norm']}")
     print(f"Weight decay:        {config['weight_decay']}")
@@ -393,6 +460,7 @@ def main(args):
     print(f"Total iterations:           {len(train_loader) * config['num_epochs']:,}")
     print(f"Augmentation:               {config['augmentation_strength']}")
     print(f"Device:                     {device}")
+    print(f"Effective epochs remaining: {remaining_epochs}")
     print("=" * 70)
     print("\n⏰ Training will take 7-15 hours depending on GPU.")
     print("📊 Progress will be displayed after each epoch.")
@@ -415,7 +483,7 @@ def main(args):
         val_loader=val_loader,
         criterion=criterion,
         optimizer=optimizer,
-        scheduler=None,  # No scheduler if --no-scheduler flag is set
+        scheduler=scheduler,
         num_epochs=config['num_epochs'],
         start_epoch=start_epoch,
         best_acc=best_acc_so_far
@@ -582,7 +650,7 @@ if __name__ == "__main__":
                         help='Augmentation strength (default: medium)')
 
     # Learning rate arguments
-    parser.add_argument('--find-lr', action='store_true', default=True,
+    parser.add_argument('--find-lr', action='store_false', default=False,
                         help='Run LR finder (default: True)')
     parser.add_argument('--no-find-lr', dest='find_lr', action='store_false',
                         help='Skip LR finder')
