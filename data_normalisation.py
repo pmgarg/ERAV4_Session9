@@ -50,7 +50,7 @@ def get_train_transforms(advanced_augmentation=True, augmentation_strength='medi
                 transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05),
                 transforms.ToTensor(),
                 normalize,
-                transforms.RandomErasing(p=0.1, scale=(0.02, 0.05))  # Reduced erasing
+                transforms.RandomErasing(p=0.1, scale=(0.02, 0.1))  # Reduced erasing
             ])
         else:  # heavy
             # Heavy augmentation - for large datasets only

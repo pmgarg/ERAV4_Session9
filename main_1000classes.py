@@ -62,9 +62,9 @@ def main(args):
 
         # Learning Rate Configuration
         'find_lr': args.find_lr,
-        'initial_lr': 0.00004186,#2.52e-03, #6.19e-04,#args.initial_lr if args.initial_lr is not None else 6.19e-04,
-        'max_lr': 2.52e-03,#0.001046474000509319, #0.00322, #args.max_lr if args.max_lr is not None else 1.024401,
-        'lr_finder_iterations': 3000,
+        'initial_lr': 0.000004186,#2.52e-03, #6.19e-04,#args.initial_lr if args.initial_lr is not None else 6.19e-04,
+        'max_lr': 2.52e-4,#0.001046474000509319, #0.00322, #args.max_lr if args.max_lr is not None else 1.024401,
+        'lr_finder_iterations': 4000,
 
         # Regularization
         'weight_decay': 1e-4,
@@ -300,8 +300,8 @@ def main(args):
         else:
             # OneCycleLR expects base lr = max_lr / div_factor
             config['max_lr'] = suggested_max_lr
-            config['initial_lr'] = suggested_initial_lr
-            #config['initial_lr'] = config['max_lr'] / config['div_factor']
+            #config['initial_lr'] = suggested_initial_lr
+            config['initial_lr'] = config['max_lr'] / config['div_factor']
             print(f"\n💡 Using LR range for scheduler:")
             print(f"   Base LR (max/div): {config['initial_lr']:.6f}")
             print(f"   Max LR:            {config['max_lr']:.6f}")
@@ -358,25 +358,25 @@ def main(args):
 
             if args.no_scheduler:
                 if stored_initial:
-                    config['initial_lr'] = stored_initial
-                    config['max_lr'] = stored_initial
+                    #config['initial_lr'] = stored_initial
+                    #config['max_lr'] = stored_initial
                     print(f"\n✓ Loaded constant LR {config['initial_lr']:.6f} from {lr_config_path}")
             else:
                 if stored_max:
-                    config['max_lr'] = stored_max
-                    config['initial_lr'] = config['max_lr'] / config['div_factor']
+                    #config['max_lr'] = stored_max
+                    #config['initial_lr'] = config['max_lr'] / config['div_factor']
                     print(f"\n✓ Loaded OneCycle max LR {config['max_lr']:.6f} from {lr_config_path}")
                 elif stored_initial:
-                    config['initial_lr'] = stored_initial
-                    config['max_lr'] = config['initial_lr'] * config['div_factor']
+                    #config['initial_lr'] = stored_initial
+                    #config['max_lr'] = config['initial_lr'] * config['div_factor']
                     print(f"\n✓ Reconstructed max LR {config['max_lr']:.6f} from base {config['initial_lr']:.6f}")
         except Exception as e:
             print(f"\n⚠️  Could not read LR config ({lr_config_path}): {e}")
 
     if not args.no_scheduler and config['max_lr'] <= config['initial_lr']:
         print("\n⚠️  Detected max_lr <= base lr. Adjusting to maintain OneCycle schedule.")
-        config['max_lr'] = max(config['initial_lr'] * config['div_factor'], config['max_lr'] * 10)
-        config['initial_lr'] = config['max_lr'] / config['div_factor']
+        #config['max_lr'] = max(config['initial_lr'] * config['div_factor'], config['max_lr'] * 10)
+        #config['initial_lr'] = config['max_lr'] / config['div_factor']
 
     # ========================================================================
     # OPTIMIZER & SCHEDULER
