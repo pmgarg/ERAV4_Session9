@@ -58,7 +58,7 @@ def main(args):
         'pin_memory': True,
 
         # Augmentation
-        'augmentation_strength': 'medium', #args.augmentation or 'heavy',
+        'augmentation_strength': 'heavy', #args.augmentation or 'heavy',
 
         # Learning Rate Configuration
         'find_lr': args.find_lr,
