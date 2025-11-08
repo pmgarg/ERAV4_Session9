@@ -21,11 +21,64 @@ from pathlib import Path
 import time
 import argparse
 import sys
+import numpy as np
 
 # Local imports
 from model import create_resnet50, get_model_stats
 from data_loader_full import get_full_dataloaders
 from train import Trainer
+
+
+# ========================================================================
+# MIXUP AUGMENTATION
+# ========================================================================
+def mixup_data(x, y, alpha=0.2, device='cuda'):
+    """
+    Mixup augmentation: mix pairs of samples and their labels.
+
+    Args:
+        x: input batch of images [batch_size, C, H, W]
+        y: labels [batch_size]
+        alpha: mixup hyperparameter (default: 0.2 for ImageNet)
+        device: device to create tensors on
+
+    Returns:
+        mixed_x: mixed images
+        y_a, y_b: original labels for the two mixed samples
+        lam: mixing coefficient
+
+    Reference:
+        mixup: Beyond Empirical Risk Minimization (Zhang et al., 2017)
+        https://arxiv.org/abs/1710.09412
+    """
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1.0
+
+    batch_size = x.size(0)
+    index = torch.randperm(batch_size).to(device)
+
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+
+    return mixed_x, y_a, y_b, lam
+
+
+def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    """
+    Compute mixup loss given mixed labels.
+
+    Args:
+        criterion: loss function (e.g., CrossEntropyLoss)
+        pred: model predictions
+        y_a, y_b: original labels for the two mixed samples
+        lam: mixing coefficient
+
+    Returns:
+        loss: mixup loss = lam * loss(pred, y_a) + (1 - lam) * loss(pred, y_b)
+    """
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
 def print_banner(text, char="=", width=70):
     """Print a formatted banner"""
@@ -52,19 +105,21 @@ def main(args):
         'num_classes': 1000,
 
         # Training Configuration
-        'num_epochs': args.epochs or 60,
+        'num_epochs': 80, #args.epochs or 60,
         'batch_size': 128, #args.batch_size or 256,
         'num_workers': args.num_workers or 8,
         'pin_memory': True,
 
         # Augmentation
         'augmentation_strength': 'heavy', #args.augmentation or 'heavy',
+        'use_mixup': args.use_mixup if hasattr(args, 'use_mixup') else False,
+        'mixup_alpha': args.mixup_alpha if hasattr(args, 'mixup_alpha') else 0.2,
 
         # Learning Rate Configuration
         'find_lr': args.find_lr,
-        'initial_lr': 0.000004186,#2.52e-03, #6.19e-04,#args.initial_lr if args.initial_lr is not None else 6.19e-04,
-        'max_lr': 2.52e-4,#0.001046474000509319, #0.00322, #args.max_lr if args.max_lr is not None else 1.024401,
-        'lr_finder_iterations': 4000,
+        'initial_lr': 0.000004186, #0.00017, #0.000004186,#2.52e-03, #6.19e-04,#args.initial_lr if args.initial_lr is not None else 6.19e-04,
+        'max_lr': 2.52e-4, #0.000422, #2.52e-4,#0.001046474000509319, #0.00322, #args.max_lr if args.max_lr is not None else 1.024401,
+        'lr_finder_iterations': 3000,
 
         # Regularization
         'weight_decay': 1e-4,
@@ -251,8 +306,8 @@ def main(args):
         # Run LR finder
         lrs, losses, suggested_initial_lr, suggested_max_lr = lr_finder.find(
             train_loader,
-            init_lr=1e-8,
-            end_lr=0.5,
+            init_lr=1e-6,
+            end_lr=2,
             num_iter=config['lr_finder_iterations']
         )
 
@@ -429,7 +484,9 @@ def main(args):
         model=model,
         device=device,
         checkpoint_dir=config['checkpoint_dir'],
-        max_grad_norm=config['max_grad_norm']
+        max_grad_norm=config['max_grad_norm'],
+        use_mixup=config['use_mixup'],
+        mixup_alpha=config['mixup_alpha']
     )
 
     print(f"Optimizer:           SGD with Nesterov momentum")
@@ -445,6 +502,7 @@ def main(args):
     print(f"Loss function:       CrossEntropyLoss (label_smoothing={config['label_smoothing']})")
     print(f"Gradient clipping:   {config['max_grad_norm']}")
     print(f"Weight decay:        {config['weight_decay']}")
+    print(f"Mixup augmentation:  {'Enabled (α=' + str(config['mixup_alpha']) + ')' if config['use_mixup'] else 'Disabled'}")
     print(f"\n✓ Ready to start training!")
 
     # ========================================================================
@@ -648,6 +706,10 @@ if __name__ == "__main__":
     parser.add_argument('--augmentation', type=str, default='medium',
                         choices=['light', 'medium', 'heavy'],
                         help='Augmentation strength (default: medium)')
+    parser.add_argument('--use-mixup', action='store_true',
+                        help='Enable Mixup augmentation (default: False)')
+    parser.add_argument('--mixup-alpha', type=float, default=0.2,
+                        help='Mixup alpha parameter (default: 0.2)')
 
     # Learning rate arguments
     parser.add_argument('--find-lr', action='store_false', default=False,

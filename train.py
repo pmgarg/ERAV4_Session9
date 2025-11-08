@@ -15,6 +15,7 @@ from collections import defaultdict
 import json
 import logging
 from typing import Optional
+import numpy as np
 
 # Import autocast with version compatibility
 try:
@@ -25,15 +26,68 @@ except ImportError:
     HAS_UNIFIED_AMP = False
 
 
+# ========================================================================
+# MIXUP AUGMENTATION HELPERS
+# ========================================================================
+def mixup_data(x, y, alpha=0.2, device='cuda'):
+    """
+    Mixup augmentation: mix pairs of samples and their labels.
+
+    Args:
+        x: input batch of images [batch_size, C, H, W]
+        y: labels [batch_size]
+        alpha: mixup hyperparameter (default: 0.2 for ImageNet)
+        device: device to create tensors on
+
+    Returns:
+        mixed_x: mixed images
+        y_a, y_b: original labels for the two mixed samples
+        lam: mixing coefficient
+    """
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1.0
+
+    batch_size = x.size(0)
+    index = torch.randperm(batch_size).to(device)
+
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+
+    return mixed_x, y_a, y_b, lam
+
+
+def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    """
+    Compute mixup loss given mixed labels.
+
+    Args:
+        criterion: loss function (e.g., CrossEntropyLoss)
+        pred: model predictions
+        y_a, y_b: original labels for the two mixed samples
+        lam: mixing coefficient
+
+    Returns:
+        loss: mixup loss = lam * loss(pred, y_a) + (1 - lam) * loss(pred, y_b)
+    """
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
+
+
 class Trainer:
     """Main training class with all features"""
 
-    def __init__(self, model, device, checkpoint_dir='checkpoints', max_grad_norm: Optional[float] = None):
+    def __init__(self, model, device, checkpoint_dir='checkpoints', max_grad_norm: Optional[float] = None,
+                 use_mixup=False, mixup_alpha=0.2):
         self.model = model
         self.device = device
         self.checkpoint_dir = Path(checkpoint_dir)
         self.checkpoint_dir.mkdir(exist_ok=True)
         self.max_grad_norm = max_grad_norm
+
+        # Mixup configuration
+        self.use_mixup = use_mixup
+        self.mixup_alpha = mixup_alpha
 
         # Setup logging
         self.setup_logging()
@@ -91,18 +145,31 @@ class Trainer:
 
             optimizer.zero_grad()
 
+            # Apply Mixup augmentation if enabled
+            if self.use_mixup:
+                inputs, targets_a, targets_b, lam = mixup_data(inputs, targets, self.mixup_alpha, self.device)
+
             # Mixed precision training (only on CUDA)
             if self.use_amp and HAS_UNIFIED_AMP:
                 with amp_autocast(device_type=self.amp_device):
                     outputs = model(inputs)
-                    loss = criterion(outputs, targets)
+                    if self.use_mixup:
+                        loss = mixup_criterion(criterion, outputs, targets_a, targets_b, lam)
+                    else:
+                        loss = criterion(outputs, targets)
             elif self.use_amp:
                 with amp_autocast():
                     outputs = model(inputs)
-                    loss = criterion(outputs, targets)
+                    if self.use_mixup:
+                        loss = mixup_criterion(criterion, outputs, targets_a, targets_b, lam)
+                    else:
+                        loss = criterion(outputs, targets)
             else:
                 outputs = model(inputs)
-                loss = criterion(outputs, targets)
+                if self.use_mixup:
+                    loss = mixup_criterion(criterion, outputs, targets_a, targets_b, lam)
+                else:
+                    loss = criterion(outputs, targets)
 
             # Backward pass with gradient scaling (only on CUDA)
             if self.use_amp:
@@ -129,11 +196,17 @@ class Trainer:
             # Statistics
             running_loss += loss.item()
             _, predicted = outputs.max(1)
-            total += targets.size(0)
-            correct += predicted.eq(targets).sum().item()
 
-            # Track problematic images (high loss)
-            if loss.item() > 5.0:
+            # For accuracy calculation with mixup, use the primary target (targets_a)
+            if self.use_mixup:
+                total += targets_a.size(0)
+                correct += predicted.eq(targets_a).sum().item()
+            else:
+                total += targets.size(0)
+                correct += predicted.eq(targets).sum().item()
+
+            # Track problematic images (high loss) - skip for mixup as labels are mixed
+            if loss.item() > 5.0 and not self.use_mixup:
                 for i in range(len(targets)):
                     single_loss = F.cross_entropy(outputs[i:i+1], targets[i:i+1]).item()
                     if single_loss > 5.0:
